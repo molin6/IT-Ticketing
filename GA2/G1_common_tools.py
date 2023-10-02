@@ -3,7 +3,7 @@ import importlib
 import subprocess
 import sys
 
-def drop_all_tables(db_file_name):
+def drop_all_tables(db_file_name : str = 'it_ticketing_system.db'):
     cnn = sqlite3.connect(db_file_name)
     cur = cnn.cursor()
     table_names = []
@@ -38,7 +38,7 @@ def bool_to_yes_no(value) -> str:
     elif value == 1:
         return 'YES'
 
-def print_database_definitions(db_file_name : str):
+def print_database_definitions(db_file_name : str = 'it_ticketing_system.db'):
     cnn = sqlite3.connect(db_file_name)
     cur = cnn.cursor()
     tables = cur.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()

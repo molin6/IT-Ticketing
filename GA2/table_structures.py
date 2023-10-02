@@ -55,8 +55,7 @@ class User(Base):
     
     # Relationships
     tickets = relationship('Ticket', back_populates='user')
-    ticket_lines = relationship('TicketLine', back_populates='technician')
-    technician_details = relationship('Technician', uselist=False, back_populates='user')
+    technician = relationship('Technician', uselist=False, back_populates='user')
     organization = relationship('Organization', back_populates='users')
     department = relationship('Department', back_populates='users')
 
@@ -69,8 +68,8 @@ class Technician(Base):
     manager_id = Column(Integer)
     
     # Relationships
-    user = relationship('User', back_populates='technician_details')
-
+    user = relationship('User', back_populates='technician')
+    ticket_lines = relationship('TicketLine', back_populates='technician')
 
 class Ticket(Base):
     __tablename__ = 'fact_tickets'
@@ -96,11 +95,13 @@ class TicketLine(Base):
     
     ticket_line_id = Column(Integer, primary_key=True, autoincrement=True)
     ticket_id = Column(Integer, ForeignKey('fact_tickets.ticket_id'))
-    technician_id = Column(Integer, ForeignKey('dim_users.user_id'))
+    technician_id = Column(Integer, ForeignKey('dim_technicians.technician_id'))
     assignment_date_time = Column(DateTime, nullable=False)
     completion_date_time = Column(DateTime)
     notes = Column(String)
     
     # Relationships
-    technician = relationship('User', back_populates='ticket_lines')
+    technician = relationship('Technician', back_populates='ticket_lines')
     ticket = relationship('Ticket', back_populates='ticket_lines')
+
+   
