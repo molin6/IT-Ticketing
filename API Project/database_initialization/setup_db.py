@@ -23,9 +23,6 @@ SessionLocal = None
 
 def create_engine_and_database(reset_database: bool = False):
 
-    if reset_database:
-        drop_all_tables()
-
     # Get the directory of the current script
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -34,6 +31,9 @@ def create_engine_and_database(reset_database: bool = False):
 
     # Construct the full path for the database
     db_path = os.path.join(parent_dir, 'it_ticketing_system.db')
+
+    if reset_database:
+        drop_all_tables(db_path)
 
     global engine
 
@@ -47,8 +47,8 @@ def create_engine_and_database(reset_database: bool = False):
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base.metadata.create_all(engine)
 
-def drop_all_tables(db_file_name : str = 'it_ticketing_system.db'):
-    cnn = sqlite3.connect(db_file_name)
+def drop_all_tables(db_path):
+    cnn = sqlite3.connect(db_path)
     cur = cnn.cursor()
     table_names = []
     results = cur.execute("SELECT tbl_name FROM sqlite_master")

@@ -8,8 +8,9 @@ global reset_database
 install_dependencies = False
 start_server = False
 reset_database = False
+populate_database = False
 
-main_controller.load_data_and_start_api(install_dependencies, start_server, reset_database)
+main_controller.load_data_and_start_api(install_dependencies, start_server, reset_database, populate_database)
 
 
 

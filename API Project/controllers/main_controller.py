@@ -3,7 +3,7 @@ from models import base_model
 from controllers import api_controller
 from database_initialization import setup_db
 
-def load_data_and_start_api(install_dependencies, start_server, reset_database):
+def load_data_and_start_api(install_dependencies, start_server, reset_database, populate_database):
 
     if install_dependencies:
         # Install dependencies
@@ -14,9 +14,10 @@ def load_data_and_start_api(install_dependencies, start_server, reset_database):
     setup_db.create_engine_and_database(reset_database)
 
     # Populate the database tables
-    setup_db.populate_database_tables()
-    setup_db.reset_organization_names()
-    setup_db.reset_department_names()    
+    if populate_database:
+        setup_db.populate_database_tables()
+        setup_db.reset_organization_names()
+        setup_db.reset_department_names()    
 
     # Start API Server
     if start_server:
