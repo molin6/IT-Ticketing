@@ -6,25 +6,8 @@ global start_server
 global reset_database
 
 install_dependencies = False
-start_server = False
+start_server = True
 reset_database = False
 populate_database = False
 
 main_controller.load_data_and_start_api(install_dependencies, start_server, reset_database, populate_database)
-
-
-
-
-
-
-# print(read_technician_names())
-# print(read_technician_avg_ticket_times())
-# print(read_user_ticket_counts())
-# print(read_user_ticket_counts(1))
-# print(read_department_avg_resolution_time())
-# print(read_technician_ticketinfo())
-# print(read_organizations_tickets_count())
-
-
-
-
