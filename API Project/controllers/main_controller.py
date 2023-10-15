@@ -11,7 +11,12 @@ def load_data_and_start_api(install_dependencies, start_server, reset_database, 
 
     # Create the database
     # base_model.create_engine_and_database()
-    setup_db.create_engine_and_database(reset_database)
+
+    if reset_database:
+        setup_db.drop_all_tables()
+
+    setup_db.create_engine_and_database()
+
 
     # Populate the database tables
     if populate_database:

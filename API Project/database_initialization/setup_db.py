@@ -6,6 +6,9 @@ from models.ticket_line_model import TicketLine
 from models.ticket_model import Ticket
 from models.user_model import User
 from models.department_model import Department
+
+
+
 from sqlalchemy import create_engine, text
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
@@ -16,38 +19,40 @@ from utils import G1_common_tools as tools
 import sqlite3
 import os
 
-engine = None
-session = None
+# engine = None
+# session = None
 fake = Faker()
-SessionLocal = None
+# SessionLocal = None
 
-def create_engine_and_database(reset_database: bool = False):
+def create_engine_and_database():
 
-    # Get the directory of the current script
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # # Get the directory of the current script
+    # current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Go one level up
-    parent_dir = os.path.dirname(current_dir)
+    # # Go one level up
+    # parent_dir = os.path.dirname(current_dir)
 
-    # Construct the full path for the database
-    db_path = os.path.join(parent_dir, 'it_ticketing_system.db')
+    # # Construct the full path for the database
+    # db_path = os.path.join(parent_dir, 'it_ticketing_system.db')
 
-    if reset_database:
-        drop_all_tables(db_path)
+    # if reset_database:
+    #     drop_all_tables(db_path)
 
-    global engine
+    # # global engine
 
-    engine = create_engine(f'sqlite:///{db_path}', echo=True)
+    # engine = create_engine(f'sqlite:///{db_path}', echo=True)
+    engine = Base.engine
     if not database_exists(engine.url):
         create_database(engine.url)
 
-    global session
-    session = Session(engine)
-    global SessionLocal
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    # global session
+    # session = Session(engine)
+    # global SessionLocal
+    # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base.metadata.create_all(engine)
 
-def drop_all_tables(db_path):
+def drop_all_tables():
+    db_path = Base.db_path
     cnn = sqlite3.connect(db_path)
     cur = cnn.cursor()
     table_names = []
@@ -62,14 +67,15 @@ def drop_all_tables(db_path):
     cnn.close()
 
 def add_objects_to_db(objects: list):
-    try:
-        session.add_all(objects)
-        session.commit()
-        return True
-    except SQLAlchemyError as e:
-        print(f"An error occurred: {e}")
-        session.rollback()
-        return False
+    with Session(Base.engine) as session:
+        try:
+            session.add_all(objects)
+            session.commit()
+            return True
+        except SQLAlchemyError as e:
+            print(f"An error occurred: {e}")
+            session.rollback()
+            return False
     
 def seed_organizations(session: Session, num_organizations: int):
     organizations = []
@@ -185,38 +191,39 @@ def print_database_definitions(db_file_name : str = 'it_ticketing_system.db'):
     cnn.close()
 
 def populate_database_tables():
-    #Create the organizations:
-    num_organizations = 5
-    seed_organizations(session, num_organizations)
-    organizations = session.query(Organization).all()
+    with Session(Base.engine) as session:
+        #Create the organizations:
+        num_organizations = 5
+        seed_organizations(session, num_organizations)
+        organizations = session.query(Organization).all()
 
-    #Create the departments:
-    num_departments_per_organization = 3
-    seed_departments(session, num_departments_per_organization, organizations)
-    departments = session.query(Department).all()
+        #Create the departments:
+        num_departments_per_organization = 3
+        seed_departments(session, num_departments_per_organization, organizations)
+        departments = session.query(Department).all()
 
-    #Create the users:
-    num_users_per_department = 10
-    seed_users(session, 10, departments)
-    users = session.query(User).all()
+        #Create the users:
+        num_users_per_department = 10
+        seed_users(session, 10, departments)
+        users = session.query(User).all()
 
-    #Create the tickets:
-    # num_tickets_per_user = 5
-    # seed_tickets(session, users, num_tickets_per_user)
+        #Create the tickets:
+        # num_tickets_per_user = 5
+        # seed_tickets(session, users, num_tickets_per_user)
 
-    # Modified to randomly give each user between 0 and 5 tickets:
-    seed_tickets(session, users)
-    tickets = session.query(Ticket).all()
+        # Modified to randomly give each user between 0 and 5 tickets:
+        seed_tickets(session, users)
+        tickets = session.query(Ticket).all()
 
-    #Create the technicians:
-    num_technicians = 3
-    seed_technicians(session, users, num_technicians)
-    technicians = session.query(Technician).all()
+        #Create the technicians:
+        num_technicians = 3
+        seed_technicians(session, users, num_technicians)
+        technicians = session.query(Technician).all()
 
-    #Create the ticket lines:
-    num_ticket_lines_per_ticket = 3
-    seed_ticket_lines(session, num_ticket_lines_per_ticket, tickets, technicians)
-    ticketlines = session.query(TicketLine).all()
+        #Create the ticket lines:
+        num_ticket_lines_per_ticket = 3
+        seed_ticket_lines(session, num_ticket_lines_per_ticket, tickets, technicians)
+        ticketlines = session.query(TicketLine).all()
 
 def reset_department_names():
     department_names = [
@@ -237,12 +244,13 @@ def reset_department_names():
         "Public Relations"
     ]
 
-    departments = session.query(Department).all()
+    with Session(Base.engine) as session:
+        departments = session.query(Department).all()
 
-    for department in departments:
-        selected_department = fake.random_int(min=0, max=len(department_names)-1)
-        department.name = department_names[selected_department]
-    session.commit()
+        for department in departments:
+            selected_department = fake.random_int(min=0, max=len(department_names)-1)
+            department.name = department_names[selected_department]
+        session.commit()
 
 def reset_organization_names():
     organization_names = [
@@ -253,12 +261,13 @@ def reset_organization_names():
         "Finance World Group"
     ]
 
-    organizations = session.query(Organization).all()
+    with Session(Base.engine) as session:
+        organizations = session.query(Organization).all()
 
-    for organizations in organizations:
-        selected_organization = fake.random_int(min=0, max=len(organization_names)-1)
-        organizations.name = organization_names[selected_organization]
-    session.commit()
+        for organizations in organizations:
+            selected_organization = fake.random_int(min=0, max=len(organization_names)-1)
+            organizations.name = organization_names[selected_organization]
+        session.commit()
 
 
 # import pandas as pd

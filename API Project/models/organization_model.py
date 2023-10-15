@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, DateTime, Integer, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
 from models.base_model import Base
+from models.user_model import User
 
 class Organization(Base):
     __tablename__ = 'dim_organizations'
@@ -18,22 +19,23 @@ class Organization(Base):
     users = relationship('User', back_populates='organization')
     departments = relationship('Department', back_populates='organization')
 
+    Session = sessionmaker(bind=Base.engine)
+
     def __repr__(self):
         return f'Organization(id={self.organization_id}, Name={self.name}, city={self.city}, state={self.state})'
     
-def read_organizations_tickets_count():
-    '''
-    Retrieve ticket counts for each organization.
-    '''
-    db = Base.SessionLocal
+    @classmethod
+    def read_organizations_tickets_count(cls):
+        '''
+        Retrieve ticket counts for each organization.
+        '''
+        with cls.Session() as session:
+            query = session.query(User).join(cls).group_by(cls.name)
 
-    query = db.query(Base.user_model.User).join(Base.organization_model.Organization).group_by(Base.organization_model.Organization.name)
+            results = query.all()
 
-    results = query.all()
+            organizationticket = []
+            for row in results:
+                organizationticket.append(row.organization.name + ' ' + str(len(row.tickets)))
 
-    organizationticket = []
-    for row in results:
-        organizationticket.append(row.organization.name + ' ' + str(len(row.tickets)))
-
-    db.close()
-    return organizationticket
+        return organizationticket

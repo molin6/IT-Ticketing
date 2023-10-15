@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, DateTime, Integer, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
 from models.base_model import Base
 
 class TicketLine(Base):
@@ -16,3 +16,4 @@ class TicketLine(Base):
     technician = relationship('Technician', back_populates='ticket_lines')
     ticket = relationship('Ticket', back_populates='ticket_lines')
 
+    Session = sessionmaker(bind=Base.engine)
