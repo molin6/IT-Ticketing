@@ -6,10 +6,6 @@ from models.ticket_line_model import TicketLine
 from models.ticket_model import Ticket
 from models.user_model import User
 from models.department_model import Department
-
-
-
-from sqlalchemy import create_engine, text
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,38 +13,14 @@ from faker import Faker
 import random
 from utils import G1_common_tools as tools
 import sqlite3
-import os
 
-# engine = None
-# session = None
 fake = Faker()
-# SessionLocal = None
 
 def create_engine_and_database():
-
-    # # Get the directory of the current script
-    # current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # # Go one level up
-    # parent_dir = os.path.dirname(current_dir)
-
-    # # Construct the full path for the database
-    # db_path = os.path.join(parent_dir, 'it_ticketing_system.db')
-
-    # if reset_database:
-    #     drop_all_tables(db_path)
-
-    # # global engine
-
-    # engine = create_engine(f'sqlite:///{db_path}', echo=True)
     engine = Base.engine
     if not database_exists(engine.url):
         create_database(engine.url)
 
-    # global session
-    # session = Session(engine)
-    # global SessionLocal
-    # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base.metadata.create_all(engine)
 
 def drop_all_tables():

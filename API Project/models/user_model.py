@@ -17,16 +17,19 @@ class User(Base):
     
     # Relationships
     tickets = relationship('Ticket', back_populates='user')
-    technician = relationship('Technician', uselist=False, back_populates='user')
+    technician = relationship('Technician', uselist=False, back_populates='user', foreign_keys='Technician.user_id')
     organization = relationship('Organization', back_populates='users')
     department = relationship('Department', back_populates='users')
+    technician_manager = relationship('Technician', uselist=False, back_populates='manager', foreign_keys='Technician.manager_id')
 
     Session = sessionmaker(bind=Base.engine)
 
     @classmethod
     def read_user_ticket_counts(cls, user_id=None):
         '''
-        TODO: Insert tooltip documentation here
+        Returns the first and last names of all the users along with their ticket counts
+        
+        param: user_id - optional parameter to filter by user_id
         '''
 
         with cls.Session() as session:
