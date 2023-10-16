@@ -17,3 +17,15 @@ class TicketLine(Base):
     ticket = relationship('Ticket', back_populates='ticket_lines')
 
     Session = sessionmaker(bind=Base.engine)
+    
+    #show first 10 records in the Ticket Line tables
+    @classmethod
+    def read_ticket_lines_10(cls):
+        with cls.Session() as session:
+            query = session.query(cls).limit(10)
+            ticket_lines = []
+            for row in query:
+                ticket_line = row.ticket_id, row.technician_id, row.assignment_date_time, row.completion_date_time, row.notes
+                ticket_lines.append(ticket_line)
+
+        return ticket_lines

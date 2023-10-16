@@ -43,3 +43,15 @@ class User(Base):
                 user_data.append(user)
 
         return user_data
+    
+    #show first 10 records in the User tables
+    @classmethod
+    def read_users_10(cls):
+        with cls.Session() as session:
+            query = session.query(cls).limit(10)
+            users = []
+            for row in query:
+                user = row.user_id, row.organization_id, row.department_id, row.last_name, row.first_name, row.phone_number, row.email_address, row.title
+                users.append(user)
+
+        return users

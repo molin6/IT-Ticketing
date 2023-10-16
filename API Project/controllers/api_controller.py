@@ -36,6 +36,41 @@ def read_technician_names():
     '''
     return Technician.read_technician_names()
 
+@app.get("/Ticketlines/10")
+def read_ticket_lines_10():
+    '''
+    Returns the first 10 records in the Ticket Line table
+    '''
+    return TicketLine.read_ticket_lines_10()
+
+@app.get("/Tickets/10")
+def read_tickets_10():
+    '''
+    Returns the first 10 records in the Ticket table
+    '''
+    return Ticket.read_tickets_10()
+
+@app.get("/Users/10")
+def read_users_10():
+    '''
+    Returns the first 10 records in the User table
+    '''
+    return User.read_users_10()
+
+@app.get("/Organizations/10")
+def read_organizations_10():
+    '''
+    Returns the first 10 records in the Organization table
+    '''
+    return Organization.read_organizations_10()
+
+@app.get("/Departments/10")
+def read_departments_10():
+    '''
+    Returns the first 10 records in the Department table
+    '''
+    return Department.read_departments_10()
+
 @app.get("/Technicians/AvgTicketTimes/")
 def read_technician_avg_ticket_times():
     '''
