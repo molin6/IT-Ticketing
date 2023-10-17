@@ -40,11 +40,11 @@ class Department(Base):
 
         return departments
     
-    #show first 10 records in the Department tables
+    #show (param) of records in the Department tables
     @classmethod
     def read_departments_10(cls):
         with cls.Session() as session:
-            query = session.query(cls).limit(10)
+            query = session.query(cls).all()
             departments = []
             for row in query:
                 department = row.department_id, row.organization_id, row.name, row.phone_number, row.email_address

@@ -40,11 +40,11 @@ class Organization(Base):
 
         return organizationticket
     
-    #show first 10 records in the Organization tables
+    #show (param) of records in the Organization tables
     @classmethod
     def read_organizations_10(cls):
         with cls.Session() as session:
-            query = session.query(cls).limit(10)
+            query = session.query(cls).all()
             organizations = []
             for row in query:
                 organization = row.organization_id, row.name, row.phone_number, row.email_address, row.state, row.city, row.zip_code, row.street_address

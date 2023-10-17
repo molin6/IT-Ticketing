@@ -36,40 +36,50 @@ def read_technician_names():
     '''
     return Technician.read_technician_names()
 
-@app.get("/Ticketlines/10")
+@app.get("/Ticketlines")
 def read_ticket_lines_10():
     '''
-    Returns the first 10 records in the Ticket Line table
+    Returns # of records in the Ticket Line table based on the optional parameter
     '''
-    return TicketLine.read_ticket_lines_10()
+    limit = request.args.get('limit', default=10, type=int)
+    ticket_lines = TicketLine.read_ticket_lines_10()[:limit]
+    return jsonify(ticket_lines)
 
-@app.get("/Tickets/10")
+@app.get("/Tickets")
 def read_tickets_10():
     '''
-    Returns the first 10 records in the Ticket table
+    Returns # of records in the Ticket table based on the optional parameter
     '''
-    return Ticket.read_tickets_10()
+    limit = request.args.get('limit', default=10, type=int)
+    tickets = Ticket.read_tickets_10()[:limit]
+    return jsonify(tickets)
 
-@app.get("/Users/10")
+@app.get("/Users")
 def read_users_10():
     '''
-    Returns the first 10 records in the User table
+    Returns # of records in the User table based on the optional parameter
     '''
-    return User.read_users_10()
+    limit = request.args.get('limit', default=10, type=int)
+    users = User.read_users_10()[:limit]
+    return jsonify(users)
 
-@app.get("/Organizations/10")
+@app.get("/Organizations")
 def read_organizations_10():
     '''
-    Returns the first 10 records in the Organization table
+    Returns # of records in the Organization table based on the optional parameter
     '''
-    return Organization.read_organizations_10()
+    limit = request.args.get('limit', default=10, type=int)
+    organizations = Organization.read_organizations_10()[:limit]
+    return jsonify(organizations)
 
-@app.get("/Departments/10")
+@app.get("/Departments")
 def read_departments_10():
     '''
-    Returns the first 10 records in the Department table
+    Returns # of records in the Department table based on the optional parameter
     '''
-    return Department.read_departments_10()
+    limit = request.args.get('limit', default=10, type=int)
+    departments = Department.read_departments_10()[:limit]
+    return jsonify(departments)
 
 @app.get("/Technicians/AvgTicketTimes/")
 def read_technician_avg_ticket_times():

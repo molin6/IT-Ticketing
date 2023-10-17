@@ -44,11 +44,11 @@ class User(Base):
 
         return user_data
     
-    #show first 10 records in the User tables
+    #show (param) of records in the User tables
     @classmethod
     def read_users_10(cls):
         with cls.Session() as session:
-            query = session.query(cls).limit(10)
+            query = session.query(cls).all()
             users = []
             for row in query:
                 user = row.user_id, row.organization_id, row.department_id, row.last_name, row.first_name, row.phone_number, row.email_address, row.title
