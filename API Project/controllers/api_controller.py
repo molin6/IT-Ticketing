@@ -63,6 +63,18 @@ def read_users_10():
     users = User.read_users_10()[:limit]
     return jsonify(users)
 
+@app.delete("/Users/<user_id>")
+def delete_user(user_id):
+    '''
+    Deletes a user based on the user id
+    '''
+    working = User.delete_user(user_id)
+
+    if working:
+        return 'User deleted Successfully!'
+    else:
+        return 'User not deleted'
+
 @app.get("/Organizations")
 def read_organizations_10():
     '''

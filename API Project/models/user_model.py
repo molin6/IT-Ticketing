@@ -55,3 +55,13 @@ class User(Base):
                 users.append(user)
 
         return users
+    
+    #delete a record in the User table
+    @classmethod
+    def delete_user(cls, user_id):
+
+        with cls.Session() as session:
+            query = session.query(cls).filter(User.user_id == user_id).first()
+            session.delete(query)
+            session.commit()
+        return True
