@@ -36,6 +36,63 @@ def read_technician_names():
     '''
     return Technician.read_technician_names()
 
+@app.get("/Ticketlines")
+def read_ticket_lines_10():
+    '''
+    Returns # of records in the Ticket Line table based on the optional parameter
+    '''
+    limit = request.args.get('limit', default=10, type=int)
+    ticket_lines = TicketLine.read_ticket_lines_10()[:limit]
+    return jsonify(ticket_lines)
+
+@app.get("/Tickets")
+def read_tickets_10():
+    '''
+    Returns # of records in the Ticket table based on the optional parameter
+    '''
+    limit = request.args.get('limit', default=10, type=int)
+    tickets = Ticket.read_tickets_10()[:limit]
+    return jsonify(tickets)
+
+@app.get("/Users")
+def read_users_10():
+    '''
+    Returns # of records in the User table based on the optional parameter
+    '''
+    limit = request.args.get('limit', default=10, type=int)
+    users = User.read_users_10()[:limit]
+    return jsonify(users)
+
+@app.delete("/Users/<user_id>")
+def delete_user(user_id):
+    '''
+    Deletes a user based on the user id
+    '''
+    working = User.delete_user(user_id)
+
+    if working:
+        return 'User deleted Successfully!'
+    else:
+        return 'User not deleted'
+
+@app.get("/Organizations")
+def read_organizations_10():
+    '''
+    Returns # of records in the Organization table based on the optional parameter
+    '''
+    limit = request.args.get('limit', default=10, type=int)
+    organizations = Organization.read_organizations_10()[:limit]
+    return jsonify(organizations)
+
+@app.get("/Departments")
+def read_departments_10():
+    '''
+    Returns # of records in the Department table based on the optional parameter
+    '''
+    limit = request.args.get('limit', default=10, type=int)
+    departments = Department.read_departments_10()[:limit]
+    return jsonify(departments)
+
 @app.get("/Technicians/AvgTicketTimes/")
 def read_technician_avg_ticket_times():
     '''

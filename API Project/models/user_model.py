@@ -43,3 +43,25 @@ class User(Base):
                 user_data.append(user)
 
         return user_data
+    
+    #show (param) of records in the User tables
+    @classmethod
+    def read_users_10(cls):
+        with cls.Session() as session:
+            query = session.query(cls).all()
+            users = []
+            for row in query:
+                user = row.user_id, row.organization_id, row.department_id, row.last_name, row.first_name, row.phone_number, row.email_address, row.title
+                users.append(user)
+
+        return users
+    
+    #delete a record in the User table
+    @classmethod
+    def delete_user(cls, user_id):
+
+        with cls.Session() as session:
+            query = session.query(cls).filter(User.user_id == user_id).first()
+            session.delete(query)
+            session.commit()
+        return True

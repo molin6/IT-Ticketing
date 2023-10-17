@@ -39,3 +39,15 @@ class Organization(Base):
                 organizationticket.append(row.organization.name + ' ' + str(len(row.tickets)))
 
         return organizationticket
+    
+    #show (param) of records in the Organization tables
+    @classmethod
+    def read_organizations_10(cls):
+        with cls.Session() as session:
+            query = session.query(cls).all()
+            organizations = []
+            for row in query:
+                organization = row.organization_id, row.name, row.phone_number, row.email_address, row.state, row.city, row.zip_code, row.street_address
+                organizations.append(organization)
+
+        return organizations
