@@ -1,13 +1,14 @@
-from controllers import main_controller
+from utils import G1_common_tools
 
-
-global install_dependencies
-global start_server
-global reset_database
-
-install_dependencies = False
 start_server = True
 reset_database = False
 populate_database = False
 
+install_dependencies = True
+if install_dependencies:
+    # Install dependencies
+    G1_common_tools.install_required_packages()
+
+
+from controllers import main_controller
 main_controller.load_data_and_start_api(install_dependencies, start_server, reset_database, populate_database)

@@ -1,0 +1,16 @@
+API Project/controllers/__pycache__/__init__.cpython-311.pyc
+API Project/controllers/__pycache__/api_controller.cpython-311.pyc
+API Project/controllers/__pycache__/main_controller.cpython-311.pyc
+API Project/database_initialization/__pycache__/setup_db.cpython-311.pyc
+API Project/models/__pycache__/__init__.cpython-311.pyc
+API Project/models/__pycache__/base_model.cpython-311.pyc
+API Project/models/__pycache__/department_model.cpython-311.pyc
+API Project/models/__pycache__/organization_model.cpython-311.pyc
+API Project/models/__pycache__/technician_model.cpython-311.pyc
+API Project/models/__pycache__/ticket_line_model.cpython-311.pyc
+API Project/models/__pycache__/ticket_model.cpython-311.pyc
+API Project/models/__pycache__/user_model.cpython-311.pyc
+API Project/utils/__pycache__/G1_common_tools.cpython-311.pyc
+API Project/views/__pycache__/__init__.cpython-311.pyc
+API Project/views/__pycache__/api_view.cpython-311.pyc
+API Project/views/__pycache__/technician_view.cpython-311.pyc
