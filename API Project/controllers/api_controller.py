@@ -54,6 +54,28 @@ def read_tickets_10():
     tickets = Ticket.read_tickets_10()[:limit]
     return jsonify(tickets)
 
+@app.post("/Tickets")
+def create_ticket():
+    '''
+    Creates a new ticket
+    '''
+    ticket_data = request.get_json()
+    new_ticket = Ticket.create_ticket(ticket_data)
+    return jsonify(new_ticket.as_dict())
+
+@app.put("/Tickets/<ticket_id>")
+def update_ticket(ticket_id):
+    '''
+    Updates a ticket based on the ticket id
+    '''
+    ticket_data = request.get_json()
+    working = Ticket.update_ticket(ticket_id, ticket_data)
+
+    if working is not None:
+        return jsonify(working.as_dict())
+    else:
+        return 'Ticket not updated'
+
 @app.get("/Users")
 def read_users_10():
     '''
