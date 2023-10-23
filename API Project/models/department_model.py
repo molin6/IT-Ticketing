@@ -39,3 +39,15 @@ class Department(Base):
                 departments.append(department_name + ' ' + str(avg_resolution_time_minutes))
 
         return departments
+    
+    #show (param) of records in the Department tables
+    @classmethod
+    def read_departments_10(cls):
+        with cls.Session() as session:
+            query = session.query(cls).all()
+            departments = []
+            for row in query:
+                department = row.department_id, row.organization_id, row.name, row.phone_number, row.email_address
+                departments.append(department)
+
+        return departments
