@@ -23,7 +23,7 @@ class Technician(Base):
     @classmethod
     def read_technician_names(cls):
         with cls.Session() as session:
-            query = session.query(User).join(cls).all()
+            query = session.query(User).join(cls, User.user_id == cls.user_id).all()
             technicians = []
             for row in query:
                 technician = row.first_name + ' ' + row.last_name
@@ -34,7 +34,7 @@ class Technician(Base):
     @classmethod
     def read_technician_avg_ticket_times(cls):
         with cls.Session() as session:
-            query = session.query(cls).join(TicketLine).join(User)
+            query = session.query(cls).join(TicketLine).join(User, User.user_id == cls.user_id)
             query.all()
             technicians = []
             for row in query:
@@ -107,7 +107,11 @@ class Technician(Base):
         params: technician_id - the id of the technician whose manager is getting retrieved
         '''
         with cls.Session() as session:
-            manager = session.query(cls).filter(cls.technician_id == technician_id).first().manager
-            manager_name = manager.first_name + ' ' + manager.last_name
+            technician = session.query(cls).filter(cls.technician_id == technician_id).first()
+            manager = session.query(User).filter(User.user_id == technician.manager_id).first()
+            first = manager.first_name
+            last = manager.last_name
+            manager_name = first + ' ' + last
 
         return manager_name
+
