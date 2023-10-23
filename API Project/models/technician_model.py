@@ -11,11 +11,12 @@ class Technician(Base):
     
     technician_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('dim_users.user_id'))
-    manager_id = Column(Integer)
+    manager_id = Column(Integer, ForeignKey('dim_users.user_id'))
     
     # Relationships
-    user = relationship('User', back_populates='technician')
+    user = relationship('User', back_populates='technician', foreign_keys='Technician.user_id')
     ticket_lines = relationship('TicketLine', back_populates='technician')
+    manager = relationship('User', back_populates='technician_manager', foreign_keys='Technician.manager_id')
 
     Session = sessionmaker(bind=Base.engine)
 
@@ -67,3 +68,46 @@ class Technician(Base):
                 technicianticket.append(' Ticket ID: ' + str(ticket_id) + ' Subject: ' + subject + ' Open Date: ' + str(open_date_time) + ' Closed Date ' + str(close_date_time))
 
         return technicianticket
+    
+    @classmethod
+    def select_technicians(cls, limit):
+        with cls.Session() as session:
+            query = session.query(cls).limit(limit).all()
+            technicians = []
+            for row in query:
+                technician = {
+                    'technician_id': row.technician_id,
+                    'user_id': row.user_id,
+                    'manager_id': row.manager_id
+                }
+                technicians.append(technician)
+        return technicians
+    
+    @classmethod
+    def update_technician_manager(cls, technician_id, manager_id):
+        with cls.Session() as session:
+            technician = session.query(cls).filter(cls.technician_id == technician_id).first()
+            technician.manager_id = manager_id
+            session.commit()
+
+            for row in session.query(cls).filter(cls.technician_id == technician_id).all():
+                technician = {
+                    'technician_id': row.technician_id,
+                    'user_id': row.user_id,
+                    'manager_id': row.manager_id
+                }
+
+            return technician
+
+    @classmethod
+    def get_technicians_manager(cls, technician_id):
+        '''
+        Retrieve the manager of a technician
+
+        params: technician_id - the id of the technician whose manager is getting retrieved
+        '''
+        with cls.Session() as session:
+            manager = session.query(cls).filter(cls.technician_id == technician_id).first().manager
+            manager_name = manager.first_name + ' ' + manager.last_name
+
+        return manager_name
