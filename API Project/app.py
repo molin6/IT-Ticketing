@@ -4,7 +4,7 @@ start_server = True
 reset_database = False
 populate_database = False
 
-install_dependencies = True
+install_dependencies = False
 if install_dependencies:
     # Install dependencies
     G1_common_tools.install_required_packages()

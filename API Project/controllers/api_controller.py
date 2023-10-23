@@ -11,14 +11,6 @@ from models.user_model import User
 from models.base_model import Base
 from views import technician_view
 from views import api_view
-
-# FastAPI setup
-# app = FastAPI(
-#     title="IT Ticketing System API",
-#     description="API for Group 1's IT Ticketing System",
-#     version="0.1",
-# )
-
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -37,6 +29,8 @@ def hello_world():
 def select_technicians():
     '''
     Returns all technicians from the database
+
+    params: limit - optional parameter to limit the number of results returned, default is 10
     '''
 
     limit = int(request.args.get('limit',10))
@@ -54,10 +48,12 @@ def read_technician_names():
     technician_names = Technician.read_technician_names()
     return technician_names
 
-@app.get("/Ticketlines")
+@app.get("/TicketLines")
 def read_ticket_lines_10():
     '''
     Returns # of records in the Ticket Line table based on the optional parameter
+
+    params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
     ticket_lines = TicketLine.read_ticket_lines_10()[:limit]
@@ -67,6 +63,8 @@ def read_ticket_lines_10():
 def read_tickets_10():
     '''
     Returns # of records in the Ticket table based on the optional parameter
+
+    params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
     tickets = Ticket.read_tickets_10()[:limit]
@@ -75,7 +73,27 @@ def read_tickets_10():
 @app.post("/Tickets")
 def create_ticket():
     '''
-    Creates a new ticket
+    Creates a ticket based on the contents of the request body.
+    Set the request body to a JSON object containing the data for the new ticket.
+
+    The JSON object should have the following keys:
+
+    title: The title of the ticket (string).
+    description: The description of the ticket (string).
+    status: The status of the ticket (string).
+    priority: The priority of the ticket (string).
+    created_by: The ID of the user who created the ticket (integer).
+    assigned_to: The ID of the user who the ticket is assigned to (integer).
+
+    example:
+    {
+        "title": "New ticket",
+        "description": "This is a new ticket",
+        "status": "Open",
+        "priority": "High",
+        "created_by": 1,
+        "assigned_to": 2
+    }
     '''
     ticket_data = request.get_json()
     new_ticket = Ticket.create_ticket(ticket_data)
@@ -84,7 +102,27 @@ def create_ticket():
 @app.put("/Tickets/<ticket_id>")
 def update_ticket(ticket_id):
     '''
-    Updates a ticket based on the ticket id
+    Updates a ticket based on the ticket id, according to the contents of the request body.
+    Set the request body to a JSON object containing the data for the updated ticket.
+
+    The JSON object should have the following keys:
+
+    title: The updated title of the ticket (string).
+    description: The updated description of the ticket (string).
+    status: The updated status of the ticket (string).
+    priority: The updated priority of the ticket (string).
+    created_by: The updated ID of the user who created the ticket (integer).
+    assigned_to: The updated ID of the user who the ticket is assigned to (integer).
+
+    example:
+    {
+        "title": "Updated ticket",
+        "description": "This ticket has been updated",
+        "status": "Closed",
+        "priority": "Low",
+        "created_by": 1,
+        "assigned_to": 2
+    }
     '''
     ticket_data = request.get_json()
     working = Ticket.update_ticket(ticket_id, ticket_data)
@@ -98,6 +136,8 @@ def update_ticket(ticket_id):
 def read_users_10():
     '''
     Returns # of records in the User table based on the optional parameter
+
+    params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
     users = User.read_users_10()[:limit]
@@ -107,6 +147,9 @@ def read_users_10():
 def delete_user(user_id):
     '''
     Deletes a user based on the user id
+
+
+    params: user_id - the id of the user to delete, contained in the URL
     '''
     working = User.delete_user(user_id)
 
@@ -119,6 +162,8 @@ def delete_user(user_id):
 def read_organizations_10():
     '''
     Returns # of records in the Organization table based on the optional parameter
+
+    params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
     organizations = Organization.read_organizations_10()[:limit]
@@ -128,6 +173,8 @@ def read_organizations_10():
 def read_departments_10():
     '''
     Returns # of records in the Department table based on the optional parameter
+
+    params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
     departments = Department.read_departments_10()[:limit]
