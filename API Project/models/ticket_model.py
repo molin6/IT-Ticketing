@@ -33,7 +33,8 @@ class Ticket(Base):
             query = session.query(cls).all()
             tickets = []
             for row in query:
-                ticket = row.ticket_id, row.user_id, row.department_id, row.prior_ticket_id, row.ticket_category, row.open_date_time, row.close_date_time, row.status, row.description, row.subject
+                ticket = row.ticket_id, row.user_id, row.department_id, row.prior_ticket_id, row.ticket_category\
+                , row.open_date_time, row.close_date_time, row.status, row.description, row.subject
                 tickets.append(ticket)
 
         return tickets
@@ -44,7 +45,15 @@ class Ticket(Base):
         with cls.Session() as session:
             open_date_time1 = datetime.strptime(ticket_data['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
             close_date_time1 = datetime.strptime(ticket_data['close_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
-            new_ticket = cls(user_id=ticket_data['user_id'], department_id=ticket_data['department_id'], prior_ticket_id=ticket_data['prior_ticket_id'], ticket_category=ticket_data['ticket_category'], open_date_time=open_date_time1, close_date_time=close_date_time1, status=ticket_data['status'], description=ticket_data['description'], subject=ticket_data['subject'])
+            new_ticket = cls(user_id=ticket_data['user_id']
+                             , department_id=ticket_data['department_id']
+                             , prior_ticket_id=ticket_data['prior_ticket_id']
+                             , ticket_category=ticket_data['ticket_category']
+                             , open_date_time=open_date_time1
+                             , close_date_time=close_date_time1
+                             , status=ticket_data['status']
+                             , description=ticket_data['description']
+                             , subject=ticket_data['subject'])
             session.add(new_ticket)
             session.commit()
             session.refresh(new_ticket)
