@@ -17,19 +17,15 @@ python app.py
 ## Using the API
 Once the API is running, you can use the following commands to interact with it.
 
-### Technicians
-
-https://localhost:5000/Technicians
-
 ### `/Technicians`
 
 |METHOD|`GET`|
 |---|---|
-|**Description**|Adds a new ticket|
+|**Description**|Returns all technicians from the database|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 #### Example Request
-http://localhost:5000/Tickets
+http://localhost:5000/Technicians
 
 #### Example Params
 |Key|Value|
