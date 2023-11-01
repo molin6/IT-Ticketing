@@ -49,7 +49,7 @@ class User(Base):
     
     #show (param) of records in the User tables
     @classmethod
-    def read_users_10(cls):
+    def read_users(cls):
         with cls.Session() as session:
             query = session.query(cls).all()
             users = []

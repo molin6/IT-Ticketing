@@ -17,7 +17,6 @@ def hello_world():
     return 'Hello world'
 
 #Technician GET Calls
-
 @app.get("/Technicians/")
 def select_technicians():
     '''
@@ -31,7 +30,6 @@ def select_technicians():
     technicians = Technician.select_technicians(limit)
     return jsonify(technicians)
 
-
 @app.get("/Technicians/Names/")
 def read_technician_names():
     '''
@@ -40,29 +38,84 @@ def read_technician_names():
 
     technician_names = Technician.read_technician_names()
     return technician_names
+    
+@app.get("/Technicians/AvgTicketTimes/")
+def read_technician_avg_ticket_times():
+    '''
+    Retrieve and print the average ticket times for each technician.
+    '''
+    return Technician.read_technician_avg_ticket_times()
 
+@app.get("/Technicians/TicketsInfo")
+def read_technician_ticketinfo():
+    '''
+    Retrieve and print ticket information for each technician based on technician ID.
+    '''
+    return Technician.read_technician_ticketinfo()
+
+@app.get("/Technicians/Manager/")
+def get_technicians_manager():
+    '''
+    Retrieve the manager of a technician
+
+    params: technician_id - the id of the technician whose manager is getting retrieved
+    '''
+    try:
+        technician_id = int(request.args.get('technician_id'))
+    except ValueError:
+        # Return an error response
+        return jsonify({'error': 'Invalid technician_id value'}), 400
+
+    manager = Technician.get_technicians_manager(technician_id=technician_id)
+
+    return jsonify(manager)
+
+
+#Technician POST Calls
+@app.post("/Technicians/Update/")
+def update_technician_manager():
+    '''
+    Update the manager of a technician
+
+    params: technician_id - the id of the technician whose manager is getting updated
+            manager_id - the user id of the new manager
+    '''
+    try:
+        technician_id = int(request.args.get('technician_id'))
+        manager_id = int(request.args.get('manager_id'))
+    except ValueError:
+        # Return an error response
+        return jsonify({'error': 'Invalid technician_id or manager_id value'}), 400
+
+    update = Technician.update_technician_manager(technician_id=technician_id, manager_id=manager_id)
+
+    return jsonify(update)
+
+#TicketLine GET Calls
 @app.get("/TicketLines")
-def read_ticket_lines_10():
+def read_ticket_lines():
     '''
     Returns # of records in the Ticket Line table based on the optional parameter
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
-    ticket_lines = TicketLine.read_ticket_lines_10()[:limit]
+    ticket_lines = TicketLine.read_ticket_lines()[:limit]
     return jsonify(ticket_lines)
 
+#Ticket GET Calls
 @app.get("/Tickets")
-def read_tickets_10():
+def read_tickets():
     '''
     Returns # of records in the Ticket table based on the optional parameter
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
-    tickets = Ticket.read_tickets_10()[:limit]
+    tickets = Ticket.read_tickets()[:limit]
     return jsonify(tickets)
 
+#Ticket POST Calls
 @app.post("/Tickets")
 def create_ticket():
     '''
@@ -92,6 +145,7 @@ def create_ticket():
     new_ticket = Ticket.create_ticket(ticket_data)
     return jsonify(new_ticket.as_dict())
 
+#Ticket PUT Calls
 @app.put("/Tickets/<ticket_id>")
 def update_ticket(ticket_id):
     '''
@@ -125,17 +179,26 @@ def update_ticket(ticket_id):
     else:
         return 'Ticket not updated'
 
+#User GET Calls
 @app.get("/Users")
-def read_users_10():
+def read_users():
     '''
     Returns # of records in the User table based on the optional parameter
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
-    users = User.read_users_10()[:limit]
+    users = User.read_users()[:limit]
     return jsonify(users)
 
+@app.get("/Users/TicketCounts/")
+def read_user_ticket_counts(user_id=None):
+    '''
+    TODO: Insert tooltip documentation here
+    '''
+    return User.read_user_ticket_counts(user_id=None)
+
+#User DELETE Calls
 @app.delete("/Users/<user_id>")
 def delete_user(user_id):
     '''
@@ -151,105 +214,17 @@ def delete_user(user_id):
     else:
         return 'User not deleted'
 
+#Organization GET Calls
 @app.get("/Organizations")
-def read_organizations_10():
+def read_organizations():
     '''
     Returns # of records in the Organization table based on the optional parameter
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
     limit = request.args.get('limit', default=10, type=int)
-    organizations = Organization.read_organizations_10()[:limit]
+    organizations = Organization.read_organizations()[:limit]
     return jsonify(organizations)
-
-@app.get("/Departments")
-def read_departments_10():
-    '''
-    Returns # of records in the Department table based on the optional parameter
-
-    params: limit - optional parameter to limit the number of results returned, default is 10
-    '''
-    limit = request.args.get('limit', default=10, type=int)
-    departments = Department.read_departments_10()[:limit]
-    return jsonify(departments)
-
-@app.get("/Technicians/AvgTicketTimes/")
-def read_technician_avg_ticket_times():
-    '''
-    Retrieve and print the average ticket times for each technician.
-    '''
-    return Technician.read_technician_avg_ticket_times()
-
-@app.get("/Technicians/TicketsInfo")
-def read_technician_ticketinfo():
-    '''
-    Retrieve and print ticket information for each technician based on technician ID.
-    '''
-    return Technician.read_technician_ticketinfo()
-
-
-@app.get("/Technicians/Manager/")
-def get_technicians_manager():
-    '''
-    Retrieve the manager of a technician
-
-    params: technician_id - the id of the technician whose manager is getting retrieved
-    '''
-    try:
-        technician_id = int(request.args.get('technician_id'))
-    except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid technician_id value'}), 400
-
-    manager = Technician.get_technicians_manager(technician_id=technician_id)
-
-    return jsonify(manager)
-
-
-#Technician POST Calls
-
-@app.post("/Technicians/Update/")
-def update_technician_manager():
-    '''
-    Update the manager of a technician
-
-    params: technician_id - the id of the technician whose manager is getting updated
-            manager_id - the user id of the new manager
-    '''
-    try:
-        technician_id = int(request.args.get('technician_id'))
-        manager_id = int(request.args.get('manager_id'))
-    except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid technician_id or manager_id value'}), 400
-
-    update = Technician.update_technician_manager(technician_id=technician_id, manager_id=manager_id)
-
-    return jsonify(update)
-
-
-
-
-
-#User Calls
-
-@app.get("/Users/TicketCounts/")
-def read_user_ticket_counts(user_id=None):
-    '''
-    TODO: Insert tooltip documentation here
-    '''
-    return User.read_user_ticket_counts(user_id=None)
-
-#Department Calls
-
-@app.get("/Departments/AvgResolutionTimes")
-def read_department_avg_resolution_time():
-    '''
-    Retrieve and print the average resolution times for each department.
-    '''
-    return Department.read_department_avg_resolution_time()
-
-#Organization Calls
 
 @app.get("/Organizations/TicketCounts")
 def read_organizations_tickets_count():
@@ -257,4 +232,23 @@ def read_organizations_tickets_count():
     Retrieve ticket counts for each organization.
     '''
     return Organization.read_organizations_tickets_count()
+
+#Department GET Calls
+@app.get("/Departments")
+def read_departments():
+    '''
+    Returns # of records in the Department table based on the optional parameter
+
+    params: limit - optional parameter to limit the number of results returned, default is 10
+    '''
+    limit = request.args.get('limit', default=10, type=int)
+    departments = Department.read_departments()[:limit]
+    return jsonify(departments)
+
+@app.get("/Departments/AvgResolutionTimes")
+def read_department_avg_resolution_time():
+    '''
+    Retrieve and print the average resolution times for each department.
+    '''
+    return Department.read_department_avg_resolution_time()
 

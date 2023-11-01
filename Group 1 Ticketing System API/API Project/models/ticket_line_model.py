@@ -20,7 +20,7 @@ class TicketLine(Base):
     
     #show (param) of records in the Ticket Line tables
     @classmethod
-    def read_ticket_lines_10(cls):
+    def read_ticket_lines(cls):
         
         with cls.Session() as session:
             query = session.query(cls).all()

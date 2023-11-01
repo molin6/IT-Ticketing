@@ -28,7 +28,7 @@ class Ticket(Base):
 
     #show (param) of records in the Ticket tables
     @classmethod
-    def read_tickets_10(cls):
+    def read_tickets(cls):
         with cls.Session() as session:
             query = session.query(cls).all()
             tickets = []

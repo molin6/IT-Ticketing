@@ -42,7 +42,7 @@ class Department(Base):
     
     #show (param) of records in the Department tables
     @classmethod
-    def read_departments_10(cls):
+    def read_departments(cls):
         with cls.Session() as session:
             query = session.query(cls).all()
             departments = []

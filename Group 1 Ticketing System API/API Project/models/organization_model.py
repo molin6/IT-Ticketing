@@ -42,7 +42,7 @@ class Organization(Base):
     
     #show (param) of records in the Organization tables
     @classmethod
-    def read_organizations_10(cls):
+    def read_organizations(cls):
         with cls.Session() as session:
             query = session.query(cls).all()
             organizations = []
