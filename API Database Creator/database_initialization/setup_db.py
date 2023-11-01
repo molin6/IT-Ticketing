@@ -1,14 +1,13 @@
-from models.base_model import Base
-from models.department_model import Department
-from models.organization_model import Organization
-from models.technician_model import Technician
-from models.ticket_line_model import TicketLine
-from models.ticket_model import Ticket
-from models.user_model import User
-from models.department_model import Department
-from sqlalchemy_utils import database_exists, create_database
-from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
+from database_models.base_model import Base
+from database_models.department_model import Department
+from database_models.organization_model import Organization
+from database_models.technician_model import Technician
+from database_models.ticket_line_model import TicketLine
+from database_models.ticket_model import Ticket
+from database_models.user_model import User
+from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy_utils import database_exists, create_database
 from faker import Faker
 import random
 from utils import G1_common_tools as tools
@@ -240,6 +239,11 @@ def reset_organization_names():
             selected_organization = fake.random_int(min=0, max=len(organization_names)-1)
             organizations.name = organization_names[selected_organization]
         session.commit()
+
+
+
+
+
 
 
 # import pandas as pd

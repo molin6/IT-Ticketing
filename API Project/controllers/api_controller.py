@@ -1,16 +1,9 @@
-from fastapi import FastAPI
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey,func
-from sqlalchemy.orm import sessionmaker, relationship, declarative_base, joinedload
-from datetime import timedelta
 from models.department_model import Department
 from models.organization_model import Organization
 from models.technician_model import Technician
 from models.ticket_line_model import TicketLine
 from models.ticket_model import Ticket
 from models.user_model import User
-from models.base_model import Base
-from views import technician_view
-from views import api_view
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
