@@ -1,53 +1,76 @@
-# Group 1 API Project - IT Ticket System
+# Group 1 API Project - IT Ticket System<!-- omit from toc -->
 
-- [Group 1 API Project - IT Ticket System](#group-1-api-project---it-ticket-system)
-  - [Getting Started](#getting-started)
-  - [Creating the database](#creating-the-database)
-  - [Running the API](#running-the-api)
-  - [Using the API](#using-the-api)
-    - [`/Technicians`](#technicians)
-    - [`/Technicians/Names`](#techniciansnames)
-    - [`/TicketLines`](#ticketlines)
-    - [`/Tickets`](#tickets)
-    - [`/Tickets`](#tickets-1)
-    - [`/Tickets/<ticket_id>`](#ticketsticket_id)
-    - [`/Users`](#users)
-    - [`/Users/<user_id>`](#usersuser_id)
-    - [`/Organizations`](#organizations)
+- [Getting Started](#getting-started)
+- [Creating the database](#creating-the-database)
+- [Running the API](#running-the-api)
+- [Using the API](#using-the-api)
+  - [GET Calls](#get-calls)
     - [`/Departments`](#departments)
-    - [`/Technicians/AvgTicketTimes`](#techniciansavgtickettimes)
-    - [`/Technicians/TicketsInfo`](#techniciansticketsinfo)
-    - [`/Technicians/Manager`](#techniciansmanager)
-    - [`/Technicians/Update`](#techniciansupdate)
-    - [`/Users/TicketCounts`](#usersticketcounts)
     - [`/Departments/AvgResolutionTimes`](#departmentsavgresolutiontimes)
+    - [`/Organizations`](#organizations)
     - [`/Organizations/TicketCounts`](#organizationsticketcounts)
+    - [`/Technicians`](#technicians)
+    - [`/Technicians/AvgTicketTimes`](#techniciansavgtickettimes)
+    - [`/Technicians/Manager`](#techniciansmanager)
+    - [`/Technicians/Names`](#techniciansnames)
+    - [`/Technicians/TicketsInfo`](#techniciansticketsinfo)
+    - [`/Tickets`](#tickets)
+    - [`/TicketLines`](#ticketlines)
+    - [`/Users`](#users)
+    - [`/Users/TicketCounts`](#usersticketcounts)
+  - [POST Calls](#post-calls)
+    - [`/Technicians`](#technicians-1)
+    - [`/Tickets`](#tickets-1)
+  - [PUT Calls](#put-calls)
+    - [`/Tickets`](#tickets-2)
+  - [DELETE Calls](#delete-calls)
+    - [`/Users`](#users-1)
 
 
-## Getting Started
+# Getting Started
 To get started, you'll need to install the dependencies.
 
 You can do this by navigating to the directory where the 'Group 1 Ticketing System API' folder is located and running the following command in GIT CMD:
 ```bash
 pip install -r requirements.txt
 ```
+---
 
-## Creating the database
+**Sending Requests:**
+
+The **Example Request** sections will contain references in the style of http://*{host}*/Technicians. You will need to replace {host} with the address where the API is running.
+
+**Example:**\
+http://localhost:5000/Technicians
+
+---
+
+# Creating the database
 You can create/recreate the database at any time, navigate to the directory where the 'Group 1 Ticketing System API\API Database Creator' folder is located and run the following command in GIT CMD:
 
 ```bash
 python create_database.py
 ```
 
-## Running the API
+# Running the API
 To run the API, navigate to the directory where the 'Group 1 Ticketing System API\API Project' folder is located and run the following command in GIT CMD:
 
 ```bash
 python app.py
 ```
 
-## Using the API
+# Using the API
 Once the API is running, you can use the following commands to interact with it.
+
+## GET Calls
+
+### `/Departments`
+
+### `/Departments/AvgResolutionTimes`
+
+### `/Organizations`
+
+### `/Organizations/TicketCounts`
 
 ### `/Technicians`
 
@@ -56,8 +79,8 @@ Once the API is running, you can use the following commands to interact with it.
 |**Description**|Returns all technicians from the database|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-**Example Request**
-http://localhost:5000/Technicians
+**Example Request**\
+http://*{host}*/Technicians
 
 **Example Params**
 |Key|Value|
@@ -87,14 +110,18 @@ http://localhost:5000/Technicians
 ```
 ---
 
+### `/Technicians/AvgTicketTimes`
+
+### `/Technicians/Manager`
+
 ### `/Technicians/Names`
 
 |METHOD|`GET`|
 |---|---|
 |**Description**|Returns the first and last names of all the technicians|
 
-**Example Request**
-http://localhost:5000/Technicians/Names
+**Example Request**\
+http://*{host}*/Technicians/Names
 
 **Example Response**
 ```json
@@ -106,7 +133,7 @@ http://localhost:5000/Technicians/Names
 ```
 ---
 
-### `/TicketLines`
+### `/Technicians/TicketsInfo`
 
 ### `/Tickets`
 |METHOD|`GET`|
@@ -114,13 +141,32 @@ http://localhost:5000/Technicians/Names
 |**Description**|Returns # of records in the Ticket table based on the optional parameter|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-**Example Request**
-http://localhost:5000/Tickets
+**Example Request**\
+http://*{host}*/Tickets
 
 **Example Response**
 ```json
 
 ```
+
+### `/TicketLines`
+
+### `/Users`
+
+### `/Users/TicketCounts`
+
+
+
+
+
+
+
+
+
+## POST Calls
+
+### `/Technicians`
+
 <a id="add-ticket"></a>
 ### `/Tickets`
 |METHOD|`POST`|
@@ -128,8 +174,8 @@ http://localhost:5000/Tickets
 |**Description**|Adds a new ticket|
 |**Body**|Takes a json object with the following attributes: `user_id`, `department_id`, `prior_ticket_id`, `ticket_category`, `open_date_time`, `close_date_time`, `status`, `description`,`subject`|
 
-**Example Request**
-http://localhost:5000/Tickets
+**Example Request**\
+http://*{host}*/Tickets
 
 **Example Body**
 ```json
@@ -150,15 +196,24 @@ http://localhost:5000/Tickets
 ```json
 "Sucessfully added a new ticket"
 ```
+
+## PUT Calls
+
 <a id="update-ticket"></a>
-### `/Tickets/<ticket_id>`
+### `/Tickets`
 |METHOD|`PUT`|
 |-------|-----|
 |**Description**|Updates a ticket|
 |**Body**|Takes a json object with the following attributes: `user_id`, `department_id`, `prior_ticket_id`, `ticket_category`, `open_date_time`, `close_date_time`, `status`, `description`,`subject`|
+|**Params**|ticket_id - The id of the ticket to update|
 
-**Example Request**
-http://localhost:5000/Tickets/1
+**Example Params**
+|Key|Value|
+|---|---|
+|ticket_id|1|
+
+**Example Request**\
+http://*{host}*/Tickets
 
 **Example Body**
 ```json
@@ -179,40 +234,32 @@ http://localhost:5000/Tickets/1
 ```json
 "Successfully updated the ticket"
 ```
-### `/Users`
+
+## DELETE Calls
 
 <a id="delete-user"></a>
-### `/Users/<user_id>`
+### `/Users`
 
 |METHOD|`DELETE`|
 |-------|-----|
 |**Description**|Deletes a user|
+|**Params**|user_id - The id of the user to delete|
 
-**Example Request**
-http://localhost:5000/Users/1
+**Example Params**
+|Key|Value|
+|---|---|
+|user_id|1|
+
+**Example Request**\
+http://*{host}*/Users
 
 **Example Response**
 ```json
 "Sucessfully removed the user"
 ```
 
-### `/Organizations`
 
-### `/Departments`
 
-### `/Technicians/AvgTicketTimes`
-
-### `/Technicians/TicketsInfo`
-
-### `/Technicians/Manager`
-
-### `/Technicians/Update`
-
-### `/Users/TicketCounts`
-
-### `/Departments/AvgResolutionTimes`
-
-### `/Organizations/TicketCounts`
 
 
 

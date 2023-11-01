@@ -17,7 +17,7 @@ def hello_world():
     return 'Hello world'
 
 #Technician GET Calls
-@app.get("/Technicians/")
+@app.get("/Technicians")
 def select_technicians():
     '''
     Returns all technicians from the database
@@ -29,8 +29,7 @@ def select_technicians():
 
     technicians = Technician.select_technicians(limit)
     return jsonify(technicians)
-
-@app.get("/Technicians/Names/")
+@app.get("/Technicians/Names")
 def read_technician_names():
     '''
     Returns the first and last names of all the technicians
@@ -38,22 +37,19 @@ def read_technician_names():
 
     technician_names = Technician.read_technician_names()
     return technician_names
-    
-@app.get("/Technicians/AvgTicketTimes/")
+@app.get("/Technicians/AvgTicketTimes")
 def read_technician_avg_ticket_times():
     '''
     Retrieve and print the average ticket times for each technician.
     '''
     return Technician.read_technician_avg_ticket_times()
-
 @app.get("/Technicians/TicketsInfo")
 def read_technician_ticketinfo():
     '''
     Retrieve and print ticket information for each technician based on technician ID.
     '''
     return Technician.read_technician_ticketinfo()
-
-@app.get("/Technicians/Manager/")
+@app.get("/Technicians/Manager")
 def get_technicians_manager():
     '''
     Retrieve the manager of a technician
@@ -70,9 +66,8 @@ def get_technicians_manager():
 
     return jsonify(manager)
 
-
 #Technician POST Calls
-@app.post("/Technicians/Update/")
+@app.post("/Technicians")
 def update_technician_manager():
     '''
     Update the manager of a technician
@@ -146,32 +141,43 @@ def create_ticket():
     return jsonify(new_ticket.as_dict())
 
 #Ticket PUT Calls
-@app.put("/Tickets/<ticket_id>")
-def update_ticket(ticket_id):
+@app.put("/Tickets")
+def update_ticket():
     '''
     Updates a ticket based on the ticket id, according to the contents of the request body.
     Set the request body to a JSON object containing the data for the updated ticket.
 
-    The JSON object should have the following keys:
+    params: ticket_id - the id of the ticket which is getting updated
 
-    title: The updated title of the ticket (string).
-    description: The updated description of the ticket (string).
-    status: The updated status of the ticket (string).
-    priority: The updated priority of the ticket (string).
-    created_by: The updated ID of the user who created the ticket (integer).
-    assigned_to: The updated ID of the user who the ticket is assigned to (integer).
+    body: The JSON object containing the data for the updated ticket.
+        The JSON object should have the following keys:
 
-    example:
-    {
-        "title": "Updated ticket",
-        "description": "This ticket has been updated",
-        "status": "Closed",
-        "priority": "Low",
-        "created_by": 1,
-        "assigned_to": 2
-    }
+        title: The updated title of the ticket (string).
+        description: The updated description of the ticket (string).
+        status: The updated status of the ticket (string).
+        priority: The updated priority of the ticket (string).
+        created_by: The updated ID of the user who created the ticket (integer).
+        assigned_to: The updated ID of the user who the ticket is assigned to (integer).
+
+        example:
+        {
+            "title": "Updated ticket",
+            "description": "This ticket has been updated",
+            "status": "Closed",
+            "priority": "Low",
+            "created_by": 1,
+            "assigned_to": 2
+        }
+
     '''
     ticket_data = request.get_json()
+
+    try:
+        ticket_id = int(request.args.get('ticket_id'))
+    except ValueError:
+        # Return an error response
+        return jsonify({'error': 'Invalid ticket_id value'}), 400
+
     working = Ticket.update_ticket(ticket_id, ticket_data)
 
     if working is not None:
@@ -190,23 +196,38 @@ def read_users():
     limit = request.args.get('limit', default=10, type=int)
     users = User.read_users()[:limit]
     return jsonify(users)
-
-@app.get("/Users/TicketCounts/")
-def read_user_ticket_counts(user_id=None):
+@app.get("/Users/TicketCounts")
+def read_user_ticket_counts():
     '''
     TODO: Insert tooltip documentation here
+    params: user_id - optional parameter for the id of the user to retrieve the ticket count information
     '''
-    return User.read_user_ticket_counts(user_id=None)
+    try:
+        user_id_value = request.args.get('user_id')
+        if user_id_value is not None:
+            user_id = int(request.args.get('user_id'))
+        else:
+            user_id = None
+    except ValueError:
+        # Return an error response
+        return jsonify({'error': 'Invalid user_id value'}), 400
+
+    return User.read_user_ticket_counts(user_id)
 
 #User DELETE Calls
-@app.delete("/Users/<user_id>")
-def delete_user(user_id):
+@app.delete("/Users")
+def delete_user():
     '''
     Deletes a user based on the user id
 
-
     params: user_id - the id of the user to delete, contained in the URL
     '''
+    try:
+        user_id = int(request.args.get('user_id'))
+    except ValueError:
+        # Return an error response
+        return jsonify({'error': 'Invalid user_id value'}), 400
+
     working = User.delete_user(user_id)
 
     if working:
@@ -225,7 +246,6 @@ def read_organizations():
     limit = request.args.get('limit', default=10, type=int)
     organizations = Organization.read_organizations()[:limit]
     return jsonify(organizations)
-
 @app.get("/Organizations/TicketCounts")
 def read_organizations_tickets_count():
     '''
@@ -244,11 +264,9 @@ def read_departments():
     limit = request.args.get('limit', default=10, type=int)
     departments = Department.read_departments()[:limit]
     return jsonify(departments)
-
 @app.get("/Departments/AvgResolutionTimes")
 def read_department_avg_resolution_time():
     '''
     Retrieve and print the average resolution times for each department.
     '''
     return Department.read_department_avg_resolution_time()
-
