@@ -3,13 +3,13 @@
 ## Getting Started
 To get started, you'll need to install the dependencies.
 
-You can do this by navigating to the directory where 'API Project' is located and running the following command in GIT CMD:
+You can do this by navigating to the directory where the 'Group 1 Ticketing System API' folder is located and running the following command in GIT CMD:
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Running the API
-To run the API, you can run the following command:
+To run the API, you can run the following command from the 'Group 1 Ticketing System API\API Project' folder:
 ```bash
 python app.py
 ```
