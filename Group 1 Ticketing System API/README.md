@@ -1,5 +1,29 @@
 # Group 1 API Project - IT Ticket System
 
+- [Group 1 API Project - IT Ticket System](#group-1-api-project---it-ticket-system)
+  - [Getting Started](#getting-started)
+  - [Creating the database](#creating-the-database)
+  - [Running the API](#running-the-api)
+  - [Using the API](#using-the-api)
+    - [`/Technicians`](#technicians)
+    - [`/Technicians/Names`](#techniciansnames)
+    - [`/TicketLines`](#ticketlines)
+    - [`/Tickets`](#tickets)
+    - [`/Tickets`](#tickets-1)
+    - [`/Tickets/<ticket_id>`](#ticketsticket_id)
+    - [`/Users`](#users)
+    - [`/Users/<user_id>`](#usersuser_id)
+    - [`/Organizations`](#organizations)
+    - [`/Departments`](#departments)
+    - [`/Technicians/AvgTicketTimes`](#techniciansavgtickettimes)
+    - [`/Technicians/TicketsInfo`](#techniciansticketsinfo)
+    - [`/Technicians/Manager`](#techniciansmanager)
+    - [`/Technicians/Update`](#techniciansupdate)
+    - [`/Users/TicketCounts`](#usersticketcounts)
+    - [`/Departments/AvgResolutionTimes`](#departmentsavgresolutiontimes)
+    - [`/Organizations/TicketCounts`](#organizationsticketcounts)
+
+
 ## Getting Started
 To get started, you'll need to install the dependencies.
 
@@ -8,8 +32,16 @@ You can do this by navigating to the directory where the 'Group 1 Ticketing Syst
 pip install -r requirements.txt
 ```
 
+## Creating the database
+You can create/recreate the database at any time, navigate to the directory where the 'Group 1 Ticketing System API\API Database Creator' folder is located and run the following command in GIT CMD:
+
+```bash
+python create_database.py
+```
+
 ## Running the API
-To run the API, you can run the following command from the 'Group 1 Ticketing System API\API Project' folder:
+To run the API, navigate to the directory where the 'Group 1 Ticketing System API\API Project' folder is located and run the following command in GIT CMD:
+
 ```bash
 python app.py
 ```
@@ -24,16 +56,16 @@ Once the API is running, you can use the following commands to interact with it.
 |**Description**|Returns all technicians from the database|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-#### Example Request
+**Example Request**
 http://localhost:5000/Technicians
 
-#### Example Params
+**Example Params**
 |Key|Value|
 |---|---|
 |limit|1|
 
 
-#### Example Response:
+**Example Response:**
 ```json
 [
   {
@@ -61,10 +93,10 @@ http://localhost:5000/Technicians
 |---|---|
 |**Description**|Returns the first and last names of all the technicians|
 
-#### Example Request
+**Example Request**
 http://localhost:5000/Technicians/Names
 
-#### Example Response:
+**Example Response**
 ```json
 [
     "Joseph Perez",
@@ -82,10 +114,10 @@ http://localhost:5000/Technicians/Names
 |**Description**|Returns # of records in the Ticket table based on the optional parameter|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-#### Example Request
+**Example Request**
 http://localhost:5000/Tickets
 
-#### Example Response:
+**Example Response**
 ```json
 
 ```
@@ -96,10 +128,10 @@ http://localhost:5000/Tickets
 |**Description**|Adds a new ticket|
 |**Body**|Takes a json object with the following attributes: `user_id`, `department_id`, `prior_ticket_id`, `ticket_category`, `open_date_time`, `close_date_time`, `status`, `description`,`subject`|
 
-#### Example Request
+**Example Request**
 http://localhost:5000/Tickets
 
-#### Example Body
+**Example Body**
 ```json
 {
         "user_id":1,
@@ -114,7 +146,7 @@ http://localhost:5000/Tickets
 }
 ```
 
-#### Example Response:
+**Example Response**
 ```json
 "Sucessfully added a new ticket"
 ```
@@ -125,10 +157,10 @@ http://localhost:5000/Tickets
 |**Description**|Updates a ticket|
 |**Body**|Takes a json object with the following attributes: `user_id`, `department_id`, `prior_ticket_id`, `ticket_category`, `open_date_time`, `close_date_time`, `status`, `description`,`subject`|
 
-#### Example Request
+**Example Request**
 http://localhost:5000/Tickets/1
 
-#### Example Body
+**Example Body**
 ```json
 {
         "user_id":1,
@@ -143,7 +175,7 @@ http://localhost:5000/Tickets/1
 }
 ```
 
-#### Example Response:
+**Example Response**
 ```json
 "Successfully updated the ticket"
 ```
@@ -156,10 +188,10 @@ http://localhost:5000/Tickets/1
 |-------|-----|
 |**Description**|Deletes a user|
 
-#### Example Request
+**Example Request**
 http://localhost:5000/Users/1
 
-#### Example Response:
+**Example Response**
 ```json
 "Sucessfully removed the user"
 ```
