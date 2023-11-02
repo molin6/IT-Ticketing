@@ -66,11 +66,16 @@ Once the API is running, you can use the following commands to interact with it.
 
 ### `/Departments`
 
+
+
 ### `/Departments/AvgResolutionTimes`
 
 ### `/Organizations`
 
 ### `/Organizations/TicketCounts`
+
+<!-- TODO: Adjust output to be in JSON format -->
+
 
 ### `/Technicians`
 
