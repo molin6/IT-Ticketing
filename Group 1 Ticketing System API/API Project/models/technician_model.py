@@ -70,8 +70,8 @@ class Technician(Base):
                 # Check if the technician exists
                 session.query(Technician).filter(Technician.technician_id == technician_id).one()
             except NoResultFound:
-                # If the technician doesn't exist, return a JSON object with a message
-                return {'message': 'Technician does not exist'}
+                # If the technician doesn't exist, return None
+                return None
             query = session.query(Ticket.ticket_id, Ticket.prior_ticket_id, Ticket.subject, Ticket.status,\
                                    Ticket.open_date_time, Ticket.close_date_time, Ticket.ticket_category, TicketLine.notes)\
                 .join(TicketLine, Ticket.ticket_id == TicketLine.ticket_id)\
@@ -92,7 +92,6 @@ class Technician(Base):
                     'notes': row.notes
                 }
                 techniciantickets.append(technicianticket)
-
         return techniciantickets
     
     @classmethod

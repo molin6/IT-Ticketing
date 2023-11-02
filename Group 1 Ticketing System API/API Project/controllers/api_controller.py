@@ -31,7 +31,7 @@ def select_technicians():
         return jsonify({'error': 'Invalid limit value'}), 400
 
     technicians = Technician.select_technicians(limit)
-    return jsonify(technicians)
+    return jsonify(technicians), 200
 @app.get("/Technicians/Names")
 def read_technician_names():
     '''
@@ -59,7 +59,11 @@ def read_technician_ticketinfo():
 
     ticket_info = Technician.read_technician_ticketinfo(technician_id)
 
-    return jsonify(ticket_info)
+    if ticket_info is not None:
+        return jsonify(ticket_info), 200
+    else:
+        return f"Error: Technician doesn't exist for technician_id {technician_id}", 404
+
 @app.get("/Technicians/Manager")
 def get_technicians_manager():
     '''
