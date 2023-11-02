@@ -55,8 +55,6 @@ class Technician(Base):
                     'last_name': row.user.last_name,
                     'average_ticket_time': str(average_interval)
                 }
-
-                # technician = row.user.first_name + ' ' + row.user.last_name + ' - Average Ticket Time: ' + str(average_interval)
                 technicians.append(technician)
         return technicians
 
@@ -72,6 +70,7 @@ class Technician(Base):
             except NoResultFound:
                 # If the technician doesn't exist, return None
                 return None
+            
             query = session.query(Ticket.ticket_id, Ticket.prior_ticket_id, Ticket.subject, Ticket.status,\
                                    Ticket.open_date_time, Ticket.close_date_time, Ticket.ticket_category, TicketLine.notes)\
                 .join(TicketLine, Ticket.ticket_id == TicketLine.ticket_id)\
@@ -115,15 +114,15 @@ class Technician(Base):
                 # Check if the technician exists
                 session.query(Technician).filter(Technician.technician_id == technician_id).one()
             except NoResultFound:
-                # If the technician doesn't exist, return a JSON object with a message
-                return {'message': 'Technician does not exist'}
-            
+                # If the technician doesn't exist, return None
+                return None
+
             try:
                 # Check if the manager exists
                 session.query(User).filter(User.user_id == manager_id).one()
             except NoResultFound:
-                # If the manager doesn't exist, return a JSON object with a message
-                return {'message': 'Manager does not exist in the User table'}
+                # If the manager doesn't exist, return None
+                return None
 
             technician = session.query(cls).filter(cls.technician_id == technician_id).first()
             technician.manager_id = manager_id
@@ -153,8 +152,8 @@ class Technician(Base):
                 # Check if the technician exists
                 session.query(Technician).filter(Technician.technician_id == technician_id).one()
             except NoResultFound:
-                # If the technician doesn't exist, return a JSON object with a message
-                return {'message': 'Technician does not exist'}
+                # If the technician doesn't exist, return None
+                return None
 
             # Get the manager of the technician
             query = session.query(
@@ -165,13 +164,13 @@ class Technician(Base):
                 User.first_name.label('manager_first_name'),
                 User.last_name.label('manager_last_name')
             )\
-            .join(User, User.user_id == Technician.manager_id)\
-            .join(UserTechnician, UserTechnician.user_id == Technician.user_id)\
-            .filter(cls.technician_id == technician_id)
+                .join(User, User.user_id == Technician.manager_id)\
+                .join(UserTechnician, UserTechnician.user_id == Technician.user_id)\
+                .filter(cls.technician_id == technician_id)
             result = query.first()
 
             if result is None or result.manager_id is None:
-                return {'message': 'Technician does not have a manager'}
+                return None
 
             manager = {
                 'technician_id': result.technician_id,
