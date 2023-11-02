@@ -47,7 +47,7 @@ def read_technician_avg_ticket_times():
     '''
     return Technician.read_technician_avg_ticket_times()
 @app.get("/Technicians/TicketsInfo")
-def read_technician_ticketinfo():
+def read_technician_ticketinfo():#Use for an example on how to return error messages
     '''
     Retrieve and print ticket information for each technician based on technician ID.
     '''
@@ -63,7 +63,6 @@ def read_technician_ticketinfo():
         return jsonify(ticket_info), 200
     else:
         return f"Error: Technician doesn't exist for technician_id {technician_id}", 404
-
 @app.get("/Technicians/Manager")
 def get_technicians_manager():
     '''
@@ -74,12 +73,14 @@ def get_technicians_manager():
     try:
         technician_id = int(request.args.get('technician_id'))
     except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid technician_id value'}), 400
+        return jsonify({'Error': 'Invalid technician_id value'}), 400
 
-    manager = Technician.get_technicians_manager(technician_id=technician_id)
+    manager = Technician.get_technicians_manager(technician_id)
 
-    return jsonify(manager)
+    if manager is not None:
+        return jsonify(manager), 200
+    else:
+        return f"Error: Technician with technician_id {technician_id} either does not exist, or their manager does not exist", 404
 
 #Technician POST Calls
 @app.post("/Technicians")
@@ -95,11 +96,14 @@ def update_technician_manager():
         manager_id = int(request.args.get('manager_id'))
     except ValueError:
         # Return an error response
-        return jsonify({'error': 'Invalid technician_id or manager_id value'}), 400
+        return jsonify({'Error': 'Invalid technician_id or manager_id value'}), 400
 
     update = Technician.update_technician_manager(technician_id=technician_id, manager_id=manager_id)
 
-    return jsonify(update)
+    if update is not None:
+        return jsonify(update), 200
+    else:
+        return f"Error: Provided technician_id or manager_id value does not exist", 404
 
 #TicketLine GET Calls
 @app.get("/TicketLines")
