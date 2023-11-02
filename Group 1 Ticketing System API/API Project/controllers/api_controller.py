@@ -24,8 +24,11 @@ def select_technicians():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-
-    limit = int(request.args.get('limit',10))
+    try:
+        limit = int(request.args.get('limit', 10))
+    except ValueError:
+        # Return an error response
+        return jsonify({'error': 'Invalid limit value'}), 400
 
     technicians = Technician.select_technicians(limit)
     return jsonify(technicians)
@@ -48,7 +51,15 @@ def read_technician_ticketinfo():
     '''
     Retrieve and print ticket information for each technician based on technician ID.
     '''
-    return Technician.read_technician_ticketinfo()
+    try:
+        technician_id = int(request.args.get('technician_id'))
+    except ValueError:
+        # Return an error response
+        return jsonify({'error': 'Invalid technician_id value'}), 400
+
+    ticket_info = Technician.read_technician_ticketinfo(technician_id)
+
+    return jsonify(ticket_info)
 @app.get("/Technicians/Manager")
 def get_technicians_manager():
     '''
