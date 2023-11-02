@@ -26,7 +26,14 @@ class TicketLine(Base):
             query = session.query(cls).all()
             ticket_lines = []
             for row in query:
-                ticket_line = row.ticket_id, row.technician_id, row.assignment_date_time, row.completion_date_time, row.notes
+                ticket_line = {
+                'Ticket ID' : row.ticket_id,
+                'Technician ID' : row.technician_id,
+                'Assignment Date Time' : row.assignment_date_time,
+                'Completion Date Time' : row.completion_date_time,
+                'Notes' : row.notes
+                }
+                
                 ticket_lines.append(ticket_line)
 
         return ticket_lines

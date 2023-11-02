@@ -36,7 +36,11 @@ class Department(Base):
 
             departments = []
             for department_name, avg_resolution_time_minutes in results:
-                departments.append(department_name + ' ' + str(avg_resolution_time_minutes))
+
+                department = {
+                    'Department Name': department_name,
+                    'Average Resolution Time': str(avg_resolution_time_minutes)}
+                departments.append(department)
 
         return departments
     
@@ -47,7 +51,12 @@ class Department(Base):
             query = session.query(cls).all()
             departments = []
             for row in query:
-                department = row.department_id, row.organization_id, row.name, row.phone_number, row.email_address
+                department = {
+                'Department ID' : row.department_id, 
+                 'Organization ID' : row.organization_id, 
+                 'Name' : row.name, 
+                 'Phone Number' : row.phone_number, 
+                 'Email Address' : row.email_address}
                 departments.append(department)
 
         return departments
