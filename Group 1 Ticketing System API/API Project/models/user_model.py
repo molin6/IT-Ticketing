@@ -42,7 +42,10 @@ class User(Base):
 
             for row in users:
                 ticket_count = len(row.tickets)
-                user = row.first_name + ' ' + row.last_name + ' Ticket Count: ' + str(ticket_count)
+                user = {
+                    'First Name' : row.first_name,
+                    'Last Name' : row.last_name,
+                    'Ticket Count' : str(ticket_count)}
                 user_data.append(user)
 
         return user_data
@@ -54,7 +57,15 @@ class User(Base):
             query = session.query(cls).all()
             users = []
             for row in query:
-                user = row.user_id, row.organization_id, row.department_id, row.last_name, row.first_name, row.phone_number, row.email_address, row.title
+                user = {
+                    
+                    'Organization ID' : row.organization_id,
+                    'Department ID' : row.department_id,
+                    'Last Name' : row.last_name,
+                    'First Name' : row.first_name,
+                    'Phone Number' : row.phone_number,
+                    'Email Address' : row.email_address,
+                    'Title' : row.title}
                 users.append(user)
 
         return users

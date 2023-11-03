@@ -33,8 +33,18 @@ class Ticket(Base):
             query = session.query(cls).all()
             tickets = []
             for row in query:
-                ticket = row.ticket_id, row.user_id, row.department_id, row.prior_ticket_id, row.ticket_category\
-                , row.open_date_time, row.close_date_time, row.status, row.description, row.subject
+
+                ticket = {
+                    'Ticket ID' : row.ticket_id, 
+                    'User ID' : row.user_id, 
+                    'Department ID' : row.department_id, 
+                    'Prior Ticket ID' : row.prior_ticket_id, 
+                    'Ticket Category' : row.ticket_category, 
+                    'Open Date Time' : row.open_date_time, 
+                    'Close Date Time' : row.close_date_time, 
+                    'Status': row.status, 
+                    'Description' : row.description, 
+                    'Subject' : row.subject}
                 tickets.append(ticket)
 
         return tickets

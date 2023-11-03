@@ -34,11 +34,14 @@ class Organization(Base):
 
             results = query.all()
 
-            organizationticket = []
+            organizationtickets = []
             for row in results:
-                organizationticket.append(row.organization.name + ' ' + str(len(row.tickets)))
+                organizationticket = {
+                    'Organization Name': row.organization.name,
+                    'Ticket Count': str(len(row.tickets))}
+                organizationtickets.append(organizationticket)
 
-        return organizationticket
+        return organizationtickets
     
     #show (param) of records in the Organization tables
     @classmethod
@@ -47,7 +50,15 @@ class Organization(Base):
             query = session.query(cls).all()
             organizations = []
             for row in query:
-                organization = row.organization_id, row.name, row.phone_number, row.email_address, row.state, row.city, row.zip_code, row.street_address
+                organization = {
+                    'Organization ID' : row.organization_id, 
+                    'Name' : row.name, 
+                    'Phone Number' : row.phone_number, 
+                    'Email Address' : row.email_address, 
+                    'State' : row.state, 
+                    'City' : row.city, 
+                    'ZipCode' : row.zip_code, 
+                    'Street Adress' : row.street_address}
                 organizations.append(organization)
 
         return organizations

@@ -113,7 +113,10 @@ def read_ticket_lines():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    limit = request.args.get('limit', default=10, type=int)
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+    except ValueError:
+        return jsonify({'error': 'Invalid limit value'}), 400
     ticket_lines = TicketLine.read_ticket_lines()[:limit]
     return jsonify(ticket_lines)
 
@@ -125,9 +128,14 @@ def read_tickets():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    limit = request.args.get('limit', default=10, type=int)
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+    except ValueError:
+        return jsonify({'error': 'Invalid limit value'}), 400
+    
     tickets = Ticket.read_tickets()[:limit]
-    return jsonify(tickets)
+    return jsonify(tickets), 200
+
 
 #Ticket POST Calls
 @app.post("/Tickets")
@@ -212,9 +220,14 @@ def read_users():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    limit = request.args.get('limit', default=10, type=int)
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+    except ValueError:
+        jsonify({'error': 'Invalid user_id value'}), 400
+
     users = User.read_users()[:limit]
     return jsonify(users)
+
 @app.get("/Users/TicketCounts")
 def read_user_ticket_counts():
     '''
@@ -231,7 +244,8 @@ def read_user_ticket_counts():
         # Return an error response
         return jsonify({'error': 'Invalid user_id value'}), 400
 
-    return User.read_user_ticket_counts(user_id)
+    users = User.read_user_ticket_counts(user_id)
+    return jsonify(users), 200
 
 #User DELETE Calls
 @app.delete("/Users")
@@ -250,9 +264,9 @@ def delete_user():
     working = User.delete_user(user_id)
 
     if working:
-        return 'User deleted Successfully!'
+        return 'User deleted Successfully!', 200
     else:
-        return 'User not deleted'
+        return 'User not deleted', 500
 
 #Organization GET Calls
 @app.get("/Organizations")
@@ -262,15 +276,21 @@ def read_organizations():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    limit = request.args.get('limit', default=10, type=int)
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+    except ValueError:
+        return jsonify({'error': 'Invalid limit value'}), 400
     organizations = Organization.read_organizations()[:limit]
-    return jsonify(organizations)
+    return jsonify(organizations), 200
+
+
+
 @app.get("/Organizations/TicketCounts")
 def read_organizations_tickets_count():
     '''
     Retrieve ticket counts for each organization.
     '''
-    return Organization.read_organizations_tickets_count()
+    return jsonify(Organization.read_organizations_tickets_count()), 200
 
 #Department GET Calls
 @app.get("/Departments")
@@ -280,12 +300,17 @@ def read_departments():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    limit = request.args.get('limit', default=10, type=int)
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+    except ValueError:
+        return jsonify({'error': 'Invalid limit value'}), 400
     departments = Department.read_departments()[:limit]
-    return jsonify(departments)
+    return jsonify(departments), 200
+
+
 @app.get("/Departments/AvgResolutionTimes")
 def read_department_avg_resolution_time():
     '''
     Retrieve and print the average resolution times for each department.
     '''
-    return Department.read_department_avg_resolution_time()
+    return jsonify(Department.read_department_avg_resolution_time()), 200
