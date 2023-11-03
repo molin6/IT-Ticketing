@@ -118,7 +118,7 @@ def read_ticket_lines():
     except ValueError:
         return jsonify({'error': 'Invalid limit value'}), 400
     ticket_lines = TicketLine.read_ticket_lines()[:limit]
-    return jsonify(ticket_lines)
+    return jsonify(ticket_lines), 200
 
 #Ticket GET Calls
 @app.get("/Tickets")
@@ -165,7 +165,8 @@ def create_ticket():
     '''
     ticket_data = request.get_json()
     new_ticket = Ticket.create_ticket(ticket_data)
-    return jsonify(new_ticket.as_dict())
+    return 'Successfully added a new ticket', 200
+    #return jsonify(new_ticket.as_dict()), 200
 
 #Ticket PUT Calls
 @app.put("/Tickets")
@@ -208,9 +209,9 @@ def update_ticket():
     working = Ticket.update_ticket(ticket_id, ticket_data)
 
     if working is not None:
-        return jsonify(working.as_dict())
+        return 'Successfully updated the ticket', 200
     else:
-        return 'Ticket not updated'
+        return 'Ticket is not updated', 500
 
 #User GET Calls
 @app.get("/Users")
@@ -226,7 +227,7 @@ def read_users():
         jsonify({'error': 'Invalid user_id value'}), 400
 
     users = User.read_users()[:limit]
-    return jsonify(users)
+    return jsonify(users), 200
 
 @app.get("/Users/TicketCounts")
 def read_user_ticket_counts():
