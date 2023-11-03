@@ -2,6 +2,7 @@ from sqlalchemy import Column, String, DateTime, Integer, ForeignKey, func
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
 from models.base_model import Base
 from models.ticket_model import Ticket
+from datetime import timedelta
 
 class Department(Base):
     __tablename__ = 'dim_departments'
@@ -39,7 +40,7 @@ class Department(Base):
 
                 department = {
                     'Department Name': department_name,
-                    'Average Resolution Time': str(avg_resolution_time_minutes)}
+                    'Average Resolution Time': str(timedelta(avg_resolution_time_minutes))}
                 departments.append(department)
 
         return departments

@@ -66,14 +66,119 @@ Once the API is running, you can use the following commands to interact with it.
 
 ### `/Departments`
 
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns all departments from the database|
+|**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
+**Example Request**\
+http://*{host}*/Departments
+
+**Example Params**
+|Key|Value|
+|---|---|
+|limit|1|
+
+
+**Example Response:**
+```json
+[
+    {
+        "Department ID": 1,
+        "Email Address": "ghill@ward.com",
+        "Name": "Human Resources",
+        "Organization ID": 1,
+        "Phone Number": "+1-956-557-2067"
+    }
+]
+```
+---
 
 ### `/Departments/AvgResolutionTimes`
 
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns average ticket resolution time by departments from the database|
+
+**Example Request**\
+http://*{host}*/Departments/AvgResolutionTimes
+
+
+**Example Response:**
+```json
+[
+    {
+        "Average Resolution Time": "2:46:09.230769",
+        "Department Name": "Administration"
+    },
+    {
+        "Average Resolution Time": "-1 day, 14:34:17.142857",
+        "Department Name": "Customer Service"
+    },
+    {
+        "Average Resolution Time": "6:51:25.714286",
+        "Department Name": "Facilities Management"
+    }
+]
+```
+---
+
 ### `/Organizations`
 
-### `/Organizations/TicketCounts`
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns all organizations from the database|
+|**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
+**Example Request**\
+http://*{host}*/Organizations
+
+**Example Params**
+|Key|Value|
+|---|---|
+|limit|1|
+
+
+**Example Response:**
+```json
+[
+    {
+        "City": "Deanside",
+        "Email Address": "richardsoncarolyn@coleman.com",
+        "Name": "Tech Solutions Inc.",
+        "Organization ID": 1,
+        "Phone Number": "217.599.4048x926",
+        "State": "NE",
+        "Street Adress": "465 Kevin Ports",
+        "ZipCode": 64664
+    }
+]
+```
+---
+
+### `/Organizations/TicketCounts`
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns number of tickets by organizations from the database|
+
+**Example Request**\
+http://*{host}*/Organizations/TicketCounts
+
+
+**Example Response:**
+```json
+[
+    {
+        "Organization Name": "Acme Corporation",
+        "Ticket Count": "1"
+    },
+    {
+        "Organization Name": "Global Enterprises",
+        "Ticket Count": "0"
+    }
+]
+```
+---
 <!-- TODO: Adjust output to be in JSON format -->
 
 
@@ -156,17 +261,113 @@ http://*{host}*/Tickets
 
 ### `/TicketLines`
 
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns all ticketlines from the database|
+|**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
+
+**Example Request**\
+http://*{host}*/TicketLines
+
+**Example Params**
+|Key|Value|
+|---|---|
+|limit|2|
+
+
+**Example Response:**
+```json
+[
+    {
+        "Assignment Date Time": "Thu, 09 Jan 2020 05:56:20 GMT",
+        "Completion Date Time": "Mon, 30 Jan 2023 10:32:27 GMT",
+        "Notes": "No west strong bill. Consider realize poor thus these. None teacher sometimes thousand necessary.\nAgain door cost challenge determine enjoy course. Board people chair close. Bag expert remain sound.",
+        "Technician ID": 2,
+        "Ticket ID": 1
+    },
+    {
+        "Assignment Date Time": "Fri, 30 Jul 2021 06:30:29 GMT",
+        "Completion Date Time": "Mon, 21 Aug 2023 22:02:04 GMT",
+        "Notes": "Person boy focus idea old politics. Evening five find nor include or. Away so tough when spring.\nKnowledge since mouth course TV. Section yes star will someone always note.",
+        "Technician ID": 2,
+        "Ticket ID": 1
+    }
+]
+```
+---
+
 ### `/Users`
+
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns all users from the database|
+|**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
+
+**Example Request**\
+http://*{host}*/Users
+
+**Example Params**
+|Key|Value|
+|---|---|
+|limit|2|
+
+
+**Example Response:**
+```json
+[
+    {
+        "Department ID": 1,
+        "Email Address": "brittanywilson@example.net",
+        "First Name": "Vernon",
+        "Last Name": "Thompson",
+        "Organization ID": 1,
+        "Phone Number": "+1-800-321-5258x31825",
+        "Title": "Buyer, retail"
+    },
+    {
+        "Department ID": 1,
+        "Email Address": "ylittle@example.com",
+        "First Name": "Anthony",
+        "Last Name": "Freeman",
+        "Organization ID": 1,
+        "Phone Number": "+1-212-815-0992x2826",
+        "Title": "Paediatric nurse"
+    }
+]
+```
+---
 
 ### `/Users/TicketCounts`
 
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns numbers of tickets by users from the database|
+
+**Example Request**\
+http://*{host}*/Users/TicketCounts
 
 
-
-
-
-
-
+**Example Response:**
+```json
+[
+    {
+        "First Name": "Vernon",
+        "Last Name": "Thompson",
+        "Ticket Count": "2"
+    },
+    {
+        "First Name": "Anne",
+        "Last Name": "Alvarez",
+        "Ticket Count": "5"
+    },
+    {
+        "First Name": "Ashley",
+        "Last Name": "Livingston",
+        "Ticket Count": "3"
+    }
+]
+```
+---
 
 ## POST Calls
 
@@ -260,7 +461,7 @@ http://*{host}*/Users
 
 **Example Response**
 ```json
-"Sucessfully removed the user"
+"User deleted Successfully!"
 ```
 
 
