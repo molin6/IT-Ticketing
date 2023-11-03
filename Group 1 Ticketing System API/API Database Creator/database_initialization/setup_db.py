@@ -120,7 +120,7 @@ def seed_technicians(session: Session, users: list, num_technicians: int):
     selected_users = random.sample(users, k=min(num_technicians, len(users)))
 
     for user in selected_users:
-        technician = Technician(user_id=user.user_id)
+        technician = Technician(technician_user_id=user.user_id)
         technicians.append(technician)
 
     return add_objects_to_db(technicians)

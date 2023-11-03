@@ -16,9 +16,9 @@ class User(Base):
     
     # Relationships
     tickets = relationship('Ticket', back_populates='user')
-    technician = relationship('Technician', uselist=False, back_populates='user', foreign_keys='Technician.user_id')
+    technician = relationship('Technician', uselist=False, back_populates='user', foreign_keys='Technician.technician_user_id')
     organization = relationship('Organization', back_populates='users')
     department = relationship('Department', back_populates='users')
-    technician_manager = relationship('Technician', uselist=False, back_populates='manager', foreign_keys='Technician.manager_id')
+    technician_manager = relationship('Technician', uselist=False, back_populates='manager', foreign_keys='Technician.manager_user_id')
 
     Session = sessionmaker(bind=Base.engine)

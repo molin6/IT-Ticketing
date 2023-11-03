@@ -11,20 +11,20 @@ class Technician(Base):
     __tablename__ = 'dim_technicians'
     
     technician_id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('dim_users.user_id'))
-    manager_id = Column(Integer, ForeignKey('dim_users.user_id'))
+    technician_user_id = Column(Integer, ForeignKey('dim_users.user_id'))
+    manager_user_id = Column(Integer, ForeignKey('dim_users.user_id'))
     
     # Relationships
-    user = relationship('User', back_populates='technician', foreign_keys='Technician.user_id')
+    user = relationship('User', back_populates='technician', foreign_keys='Technician.technician_user_id')
     ticket_lines = relationship('TicketLine', back_populates='technician')
-    manager = relationship('User', back_populates='technician_manager', foreign_keys='Technician.manager_id')
+    manager = relationship('User', back_populates='technician_manager', foreign_keys='Technician.manager_user_id')
 
     Session = sessionmaker(bind=Base.engine)
 
     @classmethod
     def read_technician_names(cls):
         with cls.Session() as session:
-            query = session.query(User).join(cls, User.user_id == cls.user_id).all()
+            query = session.query(User).join(cls, User.user_id == cls.technician_user_id).all()
             technicians = []
             for row in query:
                 technician = {
@@ -38,7 +38,7 @@ class Technician(Base):
     @classmethod
     def read_technician_avg_ticket_times(cls):
         with cls.Session() as session:
-            query = session.query(cls).join(TicketLine).join(User, User.user_id == cls.user_id)
+            query = session.query(cls).join(TicketLine).join(User, User.user_id == cls.technician_user_id)
             query.all()
             technicians = []
             for row in query:
@@ -101,14 +101,14 @@ class Technician(Base):
             for row in query:
                 technician = {
                     'technician_id': row.technician_id,
-                    'user_id': row.user_id,
-                    'manager_id': row.manager_id
+                    'technician_user_id': row.technician_user_id,
+                    'manager_user_id': row.manager_user_id
                 }
                 technicians.append(technician)
         return technicians
     
     @classmethod
-    def update_technician_manager(cls, technician_id, manager_id):
+    def update_technician_manager(cls, technician_id, manager_user_id):
         with cls.Session() as session:
             try:
                 # Check if the technician exists
@@ -119,20 +119,20 @@ class Technician(Base):
 
             try:
                 # Check if the manager exists
-                session.query(User).filter(User.user_id == manager_id).one()
+                session.query(User).filter(User.user_id == manager_user_id).one()
             except NoResultFound:
                 # If the manager doesn't exist, return None
                 return None
 
             technician = session.query(cls).filter(cls.technician_id == technician_id).first()
-            technician.manager_id = manager_id
+            technician.manager_user_id = manager_user_id
             session.commit()
 
             for row in session.query(cls).filter(cls.technician_id == technician_id).all():
                 technician = {
                     'technician_id': row.technician_id,
-                    'user_id': row.user_id,
-                    'manager_id': row.manager_id
+                    'technician_user_id': row.technician_user_id,
+                    'manager_user_id': row.manager_user_id
                 }
 
             return technician
@@ -160,23 +160,23 @@ class Technician(Base):
                 Technician.technician_id,
                 UserTechnician.first_name.label('technician_first_name'),
                 UserTechnician.last_name.label('technician_last_name'),
-                Technician.manager_id,
+                Technician.manager_user_id,
                 User.first_name.label('manager_first_name'),
                 User.last_name.label('manager_last_name')
             )\
-                .join(User, User.user_id == Technician.manager_id)\
-                .join(UserTechnician, UserTechnician.user_id == Technician.user_id)\
+                .join(User, User.user_id == Technician.manager_user_id)\
+                .join(UserTechnician, UserTechnician.user_id == Technician.technician_user_id)\
                 .filter(cls.technician_id == technician_id)
             result = query.first()
 
-            if result is None or result.manager_id is None:
+            if result is None or result.manager_user_id is None:
                 return None
 
             manager = {
                 'technician_id': result.technician_id,
                 'technician_first_name': result.technician_first_name,
                 'technician_last_name': result.technician_last_name,
-                'manager_user_id': result.manager_id,
+                'manager_user_id': result.manager_user_id,
                 'manager_first_name': result.manager_first_name,
                 'manager_last_name': result.manager_last_name
             }

@@ -37,25 +37,27 @@ def read_technician_names():
     '''
     Returns the first and last names of all the technicians
     '''
-
     technician_names = Technician.read_technician_names()
-    return technician_names
+    return jsonify(technician_names), 200
 @app.get("/Technicians/AvgTicketTimes")
 def read_technician_avg_ticket_times():
     '''
     Retrieve and print the average ticket times for each technician.
     '''
-    return Technician.read_technician_avg_ticket_times()
+    return jsonify(Technician.read_technician_avg_ticket_times()), 200
 @app.get("/Technicians/TicketsInfo")
-def read_technician_ticketinfo():#Use for an example on how to return error messages
+def read_technician_ticketinfo():
     '''
     Retrieve and print ticket information for each technician based on technician ID.
     '''
+
+    technician_id = request.args.get('technician_id')
+    if technician_id is None:
+        return jsonify({'Error': 'Missing technician_id parameter'}), 400
     try:
-        technician_id = int(request.args.get('technician_id'))
+        technician_id = int(technician_id)
     except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid technician_id value'}), 400
+        return jsonify({'Error': 'Invalid technician_id value'}), 400
 
     ticket_info = Technician.read_technician_ticketinfo(technician_id)
 
@@ -70,8 +72,12 @@ def get_technicians_manager():
 
     params: technician_id - the id of the technician whose manager is getting retrieved
     '''
+
+    technician_id = request.args.get('technician_id')
+    if technician_id is None:
+        return jsonify({'Error': 'Missing technician_id parameter'}), 400
     try:
-        technician_id = int(request.args.get('technician_id'))
+        technician_id = int(technician_id)
     except ValueError:
         return jsonify({'Error': 'Invalid technician_id value'}), 400
 
@@ -89,21 +95,33 @@ def update_technician_manager():
     Update the manager of a technician
 
     params: technician_id - the id of the technician whose manager is getting updated
-            manager_id - the user id of the new manager
+            manager_user_id - the user id of the new manager
     '''
+    technician_id = request.args.get('technician_id')
+    if technician_id is None:
+        return jsonify({'Error': 'Missing technician_id parameter'}), 400
+    
+    manager_user_id = request.args.get('manager_user_id')
+    if manager_user_id is None:
+        return jsonify({'Error': 'Missing manager_user_id parameter'}), 400
+
     try:
-        technician_id = int(request.args.get('technician_id'))
-        manager_id = int(request.args.get('manager_id'))
+        technician_id = int(technician_id)
     except ValueError:
         # Return an error response
-        return jsonify({'Error': 'Invalid technician_id or manager_id value'}), 400
+        return jsonify({'Error': 'Invalid technician_id value'}), 400
+    try:
+        manager_user_id = int(manager_user_id)
+    except ValueError:
+        # Return an error response
+        return jsonify({'Error': 'Invalid manager_user_id value'}), 400
 
-    update = Technician.update_technician_manager(technician_id=technician_id, manager_id=manager_id)
+    update = Technician.update_technician_manager(technician_id=technician_id, manager_user_id=manager_user_id)
 
     if update is not None:
         return jsonify(update), 200
     else:
-        return f"Error: Provided technician_id or manager_id value does not exist", 404
+        return f"Error: Provided technician_id or manager_user_id value does not exist", 404
 
 #TicketLine GET Calls
 @app.get("/TicketLines")
@@ -200,8 +218,12 @@ def update_ticket():
     '''
     ticket_data = request.get_json()
 
+    ticket_id = request.args.get('ticket_id')
+    if ticket_id is None:
+        return jsonify({'Error': 'Missing ticket_id parameter'}), 400
+
     try:
-        ticket_id = int(request.args.get('ticket_id'))
+        ticket_id = int(ticket_id)
     except ValueError:
         # Return an error response
         return jsonify({'error': 'Invalid ticket_id value'}), 400
@@ -256,18 +278,24 @@ def delete_user():
 
     params: user_id - the id of the user to delete, contained in the URL
     '''
+
+    user_id = request.args.get('user_id')
+    if user_id is None:
+        return jsonify({'Error': 'Missing user_id parameter'}), 400
+
     try:
         user_id = int(request.args.get('user_id'))
     except ValueError:
         # Return an error response
         return jsonify({'error': 'Invalid user_id value'}), 400
 
-    working = User.delete_user(user_id)
+    result = User.delete_user(user_id)
 
-    if working:
-        return 'User deleted Successfully!', 200
+    if isinstance(result, dict):
+        # An error occurred, return the error message and status code
+        return jsonify(result), result.get('status', 500)
     else:
-        return 'User not deleted', 500
+        return 'User deleted Successfully!', 200
 
 #Organization GET Calls
 @app.get("/Organizations")
