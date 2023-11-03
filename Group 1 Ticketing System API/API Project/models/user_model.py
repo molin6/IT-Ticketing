@@ -17,10 +17,10 @@ class User(Base):
     
     # Relationships
     tickets = relationship('Ticket', back_populates='user')
-    technician = relationship('Technician', uselist=False, back_populates='user', foreign_keys='Technician.user_id')
+    technician = relationship('Technician', uselist=False, back_populates='user', foreign_keys='Technician.technician_user_id')
     organization = relationship('Organization', back_populates='users')
     department = relationship('Department', back_populates='users')
-    technician_manager = relationship('Technician', uselist=False, back_populates='manager', foreign_keys='Technician.manager_id')
+    technician_manager = relationship('Technician', uselist=False, back_populates='manager', foreign_keys='Technician.manager_user_id')
 
     Session = sessionmaker(bind=Base.engine)
 
@@ -73,9 +73,10 @@ class User(Base):
     #delete a record in the User table
     @classmethod
     def delete_user(cls, user_id):
-
         with cls.Session() as session:
-            query = session.query(cls).filter(User.user_id == user_id).first()
-            session.delete(query)
+            user = session.query(cls).filter(User.user_id == user_id).first()
+            if user is None:
+                return {'Error': 'User not found', 'status': 404}
+            session.delete(user)
             session.commit()
         return True
