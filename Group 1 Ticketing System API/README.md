@@ -81,7 +81,7 @@ Once the API is running, you can use the following commands to interact with it.
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Requests**\
-GET /Departments
+GET /Departments\
 GET /Departments?limit={limit}
 
 **Example Params**
@@ -142,7 +142,7 @@ GET /Departments/AvgResolutionTimes
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Request**\
-GET /Organizations
+GET /Organizations\
 GET /Organizations?limit={limit}
 
 **Example Params**
@@ -200,7 +200,7 @@ GET /Organizations/TicketCounts
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Request**\
-GET /Technicians
+GET /Technicians\
 GET /Technicians?limit={limit}
 
 **Example Params**
@@ -342,7 +342,7 @@ GET /Technicians/TicketsInfo?technician_id={technician_id}
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Requests**\
-GET /Tickets
+GET /Tickets\
 GET /Tickets?limit={limit}
 
 **Example Params**
@@ -376,7 +376,7 @@ GET /Tickets?limit={limit}
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Requests**\
-GET /TicketLines
+GET /TicketLines\
 GET /TicketLines?limit={limit}
 
 **Example Params**
@@ -414,7 +414,7 @@ GET /TicketLines?limit={limit}
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Requests**\
-GET /Users
+GET /Users\
 GET /Users?limit={limit}
 
 **Example Params**
@@ -522,7 +522,7 @@ POST /Technicians?technician={technician_id}&manager_user_id={manager_user_id}
 |**Params**|ticket_id - The id of the ticket to update|
 
 **Example Request**\
-PUT /Tickets
+PUT /Tickets\
 PUT /Tickets?ticket_id={ticket_id}
 
 **Example Params**
