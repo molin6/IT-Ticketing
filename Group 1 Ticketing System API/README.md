@@ -20,12 +20,13 @@
     - [`/Users/TicketCounts`](#usersticketcounts)
   - [POST Calls](#post-calls)
     - [`/Technicians`](#technicians-1)
-    - [`/Tickets`](#tickets-1)
   - [PUT Calls](#put-calls)
-    - [`/Tickets`](#tickets-2)
+    - [`/Tickets`](#tickets-1)
   - [DELETE Calls](#delete-calls)
     - [`/Users`](#users-1)
 
+
+</br>
 
 # Getting Started
 To get started, you'll need to install the dependencies.
@@ -38,12 +39,14 @@ pip install -r requirements.txt
 
 **Sending Requests:**
 
-The **Example Request** sections will contain references in the style of http://*{host}*/Technicians. You will need to replace {host} with the address where the API is running.
+The **Example Request** sections will contain references in the style of 'GET /Departments?limit={limit}'. You will need to add the address where the API is running to the front of the example.
 
 **Example:**\
 http://localhost:5000/Technicians
 
 ---
+
+</br>
 
 # Creating the database
 You can create/recreate the database at any time, navigate to the directory where the 'Group 1 Ticketing System API\API Database Creator' folder is located and run the following command in GIT CMD:
@@ -52,6 +55,8 @@ You can create/recreate the database at any time, navigate to the directory wher
 python create_database.py
 ```
 
+</br>
+
 # Running the API
 To run the API, navigate to the directory where the 'Group 1 Ticketing System API\API Project' folder is located and run the following command in GIT CMD:
 
@@ -59,8 +64,12 @@ To run the API, navigate to the directory where the 'Group 1 Ticketing System AP
 python app.py
 ```
 
+</br>
+
 # Using the API
 Once the API is running, you can use the following commands to interact with it.
+
+</br>
 
 ## GET Calls
 
@@ -71,8 +80,9 @@ Once the API is running, you can use the following commands to interact with it.
 |**Description**|Returns all departments from the database|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-**Example Request**\
-http://*{host}*/Departments
+**Example Requests**\
+GET /Departments
+GET /Departments?limit={limit}
 
 **Example Params**
 |Key|Value|
@@ -92,6 +102,7 @@ http://*{host}*/Departments
     }
 ]
 ```
+
 ---
 
 ### `/Departments/AvgResolutionTimes`
@@ -101,7 +112,7 @@ http://*{host}*/Departments
 |**Description**|Returns average ticket resolution time by departments from the database|
 
 **Example Request**\
-http://*{host}*/Departments/AvgResolutionTimes
+GET /Departments/AvgResolutionTimes
 
 
 **Example Response:**
@@ -131,7 +142,8 @@ http://*{host}*/Departments/AvgResolutionTimes
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Request**\
-http://*{host}*/Organizations
+GET /Organizations
+GET /Organizations?limit={limit}
 
 **Example Params**
 |Key|Value|
@@ -162,8 +174,7 @@ http://*{host}*/Organizations
 |**Description**|Returns number of tickets by organizations from the database|
 
 **Example Request**\
-http://*{host}*/Organizations/TicketCounts
-
+GET /Organizations/TicketCounts
 
 **Example Response:**
 ```json
@@ -179,7 +190,6 @@ http://*{host}*/Organizations/TicketCounts
 ]
 ```
 ---
-<!-- TODO: Adjust output to be in JSON format -->
 
 
 ### `/Technicians`
@@ -190,7 +200,8 @@ http://*{host}*/Organizations/TicketCounts
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
 **Example Request**\
-http://*{host}*/Technicians
+GET /Technicians
+GET /Technicians?limit={limit}
 
 **Example Params**
 |Key|Value|
@@ -222,7 +233,56 @@ http://*{host}*/Technicians
 
 ### `/Technicians/AvgTicketTimes`
 
+|METHOD|`GET`|
+|---|---|
+|**Description**|Returns the first and last names of all the technicians, along with their technician id and the average time it takes them to complete a ticket|
+
+**Example Request**\
+GET /Technicians/AvgTicketTimes
+
+**Example Response**
+```json
+[
+    {
+        "average_ticket_time": "2 days, 9:43:15.435567",
+        "first_name": "Jorge",
+        "last_name": "Rocha",
+        "technician_id": 1
+    }
+]
+```
+---
+
+
+
+
 ### `/Technicians/Manager`
+
+|METHOD|`GET`|
+|---|---|
+|**Description**|Retrieves the first name, last name, and user id of the technician's manager, as well as the first name, last name, and technician id of the technician whose id is passed to in the parameters|
+|**Params**|technician_id - The id of the technician whose manager is getting retrieved|
+
+**Example Request**\
+GET /Technicians/Manager?technician_id={technician_id}
+
+**Example Params**
+|Key|Value|
+|---|---|
+|technician_id|1|
+
+**Example Response**
+```json
+{
+    "manager_first_name": "Megan",
+    "manager_last_name": "Brown",
+    "manager_user_id": 5,
+    "technician_first_name": "Tony",
+    "technician_id": 2,
+    "technician_last_name": "Hamilton"
+}
+```
+---
 
 ### `/Technicians/Names`
 
@@ -231,7 +291,7 @@ http://*{host}*/Technicians
 |**Description**|Returns the first and last names of all the technicians|
 
 **Example Request**\
-http://*{host}*/Technicians/Names
+GET /Technicians/Names
 
 **Example Response**
 ```json
@@ -244,21 +304,70 @@ http://*{host}*/Technicians/Names
 ---
 
 ### `/Technicians/TicketsInfo`
+|METHOD|`GET`|
+|---|---|
+|**Description**|Retrieves ticket information for each technician based on technician Id|
+|**Params**|technician_id - The id of the technician whose tickets are being retrieved|
+
+**Example Request**\
+GET /Technicians/TicketsInfo?technician_id={technician_id}
+
+**Example Params**
+|Key|Value|
+|---|---|
+|technician_id|1|
+
+**Example Response**
+```json
+[
+    {
+        "close_date_time": "Wed, 18 Oct 2023 22:10:17 GMT",
+        "notes": "Country outside smile bad space form option. Only reflect score marriage. Increase account stay Democrat spend benefit lay system. Dog fly benefit return.",
+        "open_date_time": "Wed, 18 Oct 2023 20:10:17 GMT",
+        "prior_ticket_id": 5,
+        "status": "Active",
+        "subject": "Server connection problem",
+        "ticket_category": "Non-Emergency",
+        "ticket_id": 1
+    }
+]
+```
+---
+
 
 ### `/Tickets`
 |METHOD|`GET`|
 |---|---|
-|**Description**|Returns # of records in the Ticket table based on the optional parameter|
+|**Description**|Returns ticket records from the Ticket table|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-**Example Request**\
-http://*{host}*/Tickets
+**Example Requests**\
+GET /Tickets
+GET /Tickets?limit={limit}
+
+**Example Params**
+|Key|Value|
+|---|---|
+|limit|1|
 
 **Example Response**
 ```json
-
+[
+    {
+        "Close Date Time": "Wed, 18 Oct 2023 22:10:17 GMT",
+        "Department ID": 2,
+        "Description": "I can't connect to the server",
+        "Open Date Time": "Wed, 18 Oct 2023 20:10:17 GMT",
+        "Prior Ticket ID": 5,
+        "Status": "Active",
+        "Subject": "Server connection problem",
+        "Ticket Category": "Non-Emergency",
+        "Ticket ID": 1,
+        "User ID": 1
+    }
+]
 ```
-
+---
 ### `/TicketLines`
 
 |METHOD|`GET`|
@@ -266,13 +375,14 @@ http://*{host}*/Tickets
 |**Description**|Returns all ticketlines from the database|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-**Example Request**\
-http://*{host}*/TicketLines
+**Example Requests**\
+GET /TicketLines
+GET /TicketLines?limit={limit}
 
 **Example Params**
 |Key|Value|
 |---|---|
-|limit|2|
+|limit|1|
 
 
 **Example Response:**
@@ -303,13 +413,14 @@ http://*{host}*/TicketLines
 |**Description**|Returns all users from the database|
 |**Params**|*limit* (optional) parameter to limit the number of results returned, default is 10|
 
-**Example Request**\
-http://*{host}*/Users
+**Example Requests**\
+GET /Users
+GET /Users?limit={limit}
 
 **Example Params**
 |Key|Value|
 |---|---|
-|limit|2|
+|limit|1|
 
 
 **Example Response:**
@@ -344,8 +455,7 @@ http://*{host}*/Users
 |**Description**|Returns numbers of tickets by users from the database|
 
 **Example Request**\
-http://*{host}*/Users/TicketCounts
-
+GET /Users/TicketCounts
 
 **Example Response:**
 ```json
@@ -369,39 +479,37 @@ http://*{host}*/Users/TicketCounts
 ```
 ---
 
+</br>
+
 ## POST Calls
 
 ### `/Technicians`
-
-<a id="add-ticket"></a>
-### `/Tickets`
 |METHOD|`POST`|
 |-------|-----|
-|**Description**|Adds a new ticket|
-|**Body**|Takes a json object with the following attributes: `user_id`, `department_id`, `prior_ticket_id`, `ticket_category`, `open_date_time`, `close_date_time`, `status`, `description`,`subject`|
+|**Description**|Updates the manager of a technician|
+|**Params**|technician_id - The id of the technician whose manager is getting updated|
+| |manager_user_id - The user id of the new manager |
 
 **Example Request**\
-http://*{host}*/Tickets
+POST /Technicians?technician={technician_id}&manager_user_id={manager_user_id}
 
-**Example Body**
-```json
-{
-        "user_id":1,
-        "department_id":2,
-        "prior_ticket_id":3,
-        "ticket_category":"Non-Emergency",
-        "open_date_time":"Wed, 18 Oct 2023 20:10:17 GMT",
-        "close_date_time":"Wed, 18 Oct 2023 22:10:17 GMT",
-        "status":"Active",
-        "description":"I can't connect to the server",
-        "subject":"Server connection problem"
-}
-```
+**Example Params**
+|Key|Value|
+|---|---|
+|technician_id|1|
+|manager_user_id|2|
 
 **Example Response**
 ```json
-"Sucessfully added a new ticket"
+{
+    "manager_user_id": 2,
+    "technician_id": 1,
+    "technician_user_id": 80
+}
 ```
+---
+
+</br>
 
 ## PUT Calls
 
@@ -413,13 +521,14 @@ http://*{host}*/Tickets
 |**Body**|Takes a json object with the following attributes: `user_id`, `department_id`, `prior_ticket_id`, `ticket_category`, `open_date_time`, `close_date_time`, `status`, `description`,`subject`|
 |**Params**|ticket_id - The id of the ticket to update|
 
+**Example Request**\
+PUT /Tickets
+PUT /Tickets?ticket_id={ticket_id}
+
 **Example Params**
 |Key|Value|
 |---|---|
 |ticket_id|1|
-
-**Example Request**\
-http://*{host}*/Tickets
 
 **Example Body**
 ```json
@@ -440,10 +549,12 @@ http://*{host}*/Tickets
 ```json
 "Successfully updated the ticket"
 ```
+---
+
+</br>
 
 ## DELETE Calls
 
-<a id="delete-user"></a>
 ### `/Users`
 
 |METHOD|`DELETE`|
@@ -451,22 +562,16 @@ http://*{host}*/Tickets
 |**Description**|Deletes a user|
 |**Params**|user_id - The id of the user to delete|
 
+**Example Request**\
+DELETE /Users?user_id={user_id}
+
 **Example Params**
 |Key|Value|
 |---|---|
 |user_id|1|
 
-**Example Request**\
-http://*{host}*/Users
-
 **Example Response**
 ```json
 "User deleted Successfully!"
 ```
-
-
-
-
-
-
-
+---

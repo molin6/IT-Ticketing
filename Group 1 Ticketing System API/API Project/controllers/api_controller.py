@@ -48,7 +48,7 @@ def read_technician_avg_ticket_times():
 @app.get("/Technicians/TicketsInfo")
 def read_technician_ticketinfo():
     '''
-    Retrieve and print ticket information for each technician based on technician ID.
+    Retrieves ticket information for each technician based on technician Id.
     '''
 
     technician_id = request.args.get('technician_id')
@@ -92,7 +92,7 @@ def get_technicians_manager():
 @app.post("/Technicians")
 def update_technician_manager():
     '''
-    Update the manager of a technician
+    Updates the manager of a technician
 
     params: technician_id - the id of the technician whose manager is getting updated
             manager_user_id - the user id of the new manager
@@ -142,7 +142,7 @@ def read_ticket_lines():
 @app.get("/Tickets")
 def read_tickets():
     '''
-    Returns # of records in the Ticket table based on the optional parameter
+    Returns ticket records from the Ticket table
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
