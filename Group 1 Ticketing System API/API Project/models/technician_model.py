@@ -119,9 +119,12 @@ class Technician(Base):
 
             try:
                 # Check if the manager exists
-                session.query(User).filter(User.user_id == manager_user_id).one()
+                # session.query(User).filter(User.user_id == manager_user_id).one()
+                result = session.query(User).filter(User.user_id == manager_user_id).one_or_none()
             except NoResultFound:
                 # If the manager doesn't exist, return None
+                return None
+            if result is None:
                 return None
 
             technician = session.query(cls).filter(cls.technician_id == technician_id).first()
@@ -161,8 +164,7 @@ class Technician(Base):
                 UserTechnician.first_name.label('technician_first_name'),
                 UserTechnician.last_name.label('technician_last_name'),
                 Technician.manager_user_id,
-                User.first_name.label('manager_first_name'),
-                User.last_name.label('manager_last_name')
+                User
             )\
                 .join(User, User.user_id == Technician.manager_user_id)\
                 .join(UserTechnician, UserTechnician.user_id == Technician.technician_user_id)\
@@ -176,9 +178,7 @@ class Technician(Base):
                 'technician_id': result.technician_id,
                 'technician_first_name': result.technician_first_name,
                 'technician_last_name': result.technician_last_name,
-                'manager_user_id': result.manager_user_id,
-                'manager_first_name': result.manager_first_name,
-                'manager_last_name': result.manager_last_name
+                'manager': {column.name: getattr(result.User, column.name) for column in User.__table__.columns}
             }
         return manager
 
