@@ -16,6 +16,43 @@ def run():
 def hello_world():
     return 'Hello world'
 
+def get_int_arg(request, arg_name, default_value=None, non_negative=False):
+    '''
+    Gets an integer argument from the request object
+
+    params: request - the request object
+            arg_name - the name of the argument to retrieve
+            default_value - the default value to use if the argument is not provided
+            non_negative - whether to check if the value is non-negative
+    '''
+
+    arg_value = request.args.get(arg_name, default_value)
+    if arg_value is None:
+        return None, jsonify({'Error': f'Missing {arg_name} parameter'}), 400
+
+    try:
+        arg_value = int(arg_value)
+    except ValueError:
+        return None, jsonify({'Error': f'Invalid {arg_name} value'}), 400
+
+    if non_negative and arg_value < 0:
+        return None, jsonify({'Error': f'{arg_name} must be non-negative'}), 400
+
+    return arg_value, None, None
+
+def check_technician_exists(technician_id):
+    '''
+    Checks if a technician exists in the database
+
+    params: technician_id - the id of the technician to check
+    '''
+    technician = Technician.select_technician_by_id(technician_id)
+    if technician is None:
+        return False
+    else:
+        return True
+
+
 #Technician GET Calls
 @app.get("/Technicians")
 def select_technicians():
@@ -24,11 +61,17 @@ def select_technicians():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    try:
-        limit = int(request.args.get('limit', 10))
-    except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid limit value'}), 400
+
+    limit, error, status = get_int_arg(request, 'limit', 10, True)
+    if error:
+        return error, status
+    
+
+    # try:
+    #     limit = int(request.args.get('limit', 10))
+    # except ValueError:
+    #     # Return an error response
+    #     return jsonify({'error': 'Invalid limit value'}), 400
 
     technicians = Technician.select_technicians(limit)
     return jsonify(technicians), 200
@@ -51,13 +94,9 @@ def read_technician_ticketinfo():
     Retrieves ticket information for each technician based on technician Id.
     '''
 
-    technician_id = request.args.get('technician_id')
-    if technician_id is None:
-        return jsonify({'Error': 'Missing technician_id parameter'}), 400
-    try:
-        technician_id = int(technician_id)
-    except ValueError:
-        return jsonify({'Error': 'Invalid technician_id value'}), 400
+    technician_id, error, status = get_int_arg(request, 'technician_id')
+    if error:
+        return error, status
 
     ticket_info = Technician.read_technician_ticketinfo(technician_id)
 
@@ -73,13 +112,9 @@ def get_technicians_manager():
     params: technician_id - the id of the technician whose manager is getting retrieved
     '''
 
-    technician_id = request.args.get('technician_id')
-    if technician_id is None:
-        return jsonify({'Error': 'Missing technician_id parameter'}), 400
-    try:
-        technician_id = int(technician_id)
-    except ValueError:
-        return jsonify({'Error': 'Invalid technician_id value'}), 400
+    technician_id, error, status = get_int_arg(request, 'technician_id')
+    if error:
+        return error, status
 
     manager = Technician.get_technicians_manager(technician_id)
 
@@ -87,6 +122,14 @@ def get_technicians_manager():
         return jsonify(manager), 200
     else:
         return f"Error: Technician with technician_id {technician_id} either does not exist, or their manager does not exist", 404
+
+
+    
+
+
+
+
+
 
 #Technician POST Calls
 @app.post("/Technicians")
@@ -97,24 +140,13 @@ def update_technician_manager():
     params: technician_id - the id of the technician whose manager is getting updated
             manager_user_id - the user id of the new manager
     '''
-    technician_id = request.args.get('technician_id')
-    if technician_id is None:
-        return jsonify({'Error': 'Missing technician_id parameter'}), 400
-    
-    manager_user_id = request.args.get('manager_user_id')
-    if manager_user_id is None:
-        return jsonify({'Error': 'Missing manager_user_id parameter'}), 400
+    technician_id, error, status = get_int_arg(request, 'technician_id')
+    if error:
+        return error, status
 
-    try:
-        technician_id = int(technician_id)
-    except ValueError:
-        # Return an error response
-        return jsonify({'Error': 'Invalid technician_id value'}), 400
-    try:
-        manager_user_id = int(manager_user_id)
-    except ValueError:
-        # Return an error response
-        return jsonify({'Error': 'Invalid manager_user_id value'}), 400
+    manager_user_id, error, status = get_int_arg(request, 'manager_user_id')
+    if error:
+        return error, status
 
     update = Technician.update_technician_manager(technician_id=technician_id, manager_user_id=manager_user_id)
 
@@ -131,10 +163,11 @@ def read_ticket_lines():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    try:
-        limit = request.args.get('limit', default=10, type=int)
-    except ValueError:
-        return jsonify({'error': 'Invalid limit value'}), 400
+
+    limit, error, status = get_int_arg(request, 'limit', 10, True)
+    if error:
+        return error, status
+
     ticket_lines = TicketLine.read_ticket_lines()[:limit]
     return jsonify(ticket_lines), 200
 
@@ -146,10 +179,9 @@ def read_tickets():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    try:
-        limit = request.args.get('limit', default=10, type=int)
-    except ValueError:
-        return jsonify({'error': 'Invalid limit value'}), 400
+    limit, error, status = get_int_arg(request, 'limit', 10, True)
+    if error:
+        return error, status
     
     tickets = Ticket.read_tickets()[:limit]
     return jsonify(tickets), 200
@@ -218,15 +250,9 @@ def update_ticket():
     '''
     ticket_data = request.get_json()
 
-    ticket_id = request.args.get('ticket_id')
-    if ticket_id is None:
-        return jsonify({'Error': 'Missing ticket_id parameter'}), 400
-
-    try:
-        ticket_id = int(ticket_id)
-    except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid ticket_id value'}), 400
+    ticket_id, error, status = get_int_arg(request, 'ticket_id')
+    if error:
+        return error, status
 
     working = Ticket.update_ticket(ticket_id, ticket_data)
 
@@ -243,10 +269,9 @@ def read_users():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    try:
-        limit = request.args.get('limit', default=10, type=int)
-    except ValueError:
-        jsonify({'error': 'Invalid user_id value'}), 400
+    limit, error, status = get_int_arg(request, 'limit', 10, True)
+    if error:
+        return error, status
 
     users = User.read_users()[:limit]
     return jsonify(users), 200
@@ -257,15 +282,11 @@ def read_user_ticket_counts():
     TODO: Insert tooltip documentation here
     params: user_id - optional parameter for the id of the user to retrieve the ticket count information
     '''
-    try:
-        user_id_value = request.args.get('user_id')
-        if user_id_value is not None:
-            user_id = int(request.args.get('user_id'))
-        else:
-            user_id = None
-    except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid user_id value'}), 400
+
+
+    user_id, error, status = get_int_arg(request, 'user_id')
+    if error:
+        return error, status
 
     users = User.read_user_ticket_counts(user_id)
     return jsonify(users), 200
@@ -279,15 +300,9 @@ def delete_user():
     params: user_id - the id of the user to delete, contained in the URL
     '''
 
-    user_id = request.args.get('user_id')
-    if user_id is None:
-        return jsonify({'Error': 'Missing user_id parameter'}), 400
-
-    try:
-        user_id = int(request.args.get('user_id'))
-    except ValueError:
-        # Return an error response
-        return jsonify({'error': 'Invalid user_id value'}), 400
+    user_id, error, status = get_int_arg(request, 'user_id')
+    if error:
+        return error, status
 
     result = User.delete_user(user_id)
 
@@ -305,13 +320,12 @@ def read_organizations():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    try:
-        limit = request.args.get('limit', default=10, type=int)
-    except ValueError:
-        return jsonify({'error': 'Invalid limit value'}), 400
+    limit, error, status = get_int_arg(request, 'limit', 10, True)
+    if error:
+        return error, status
+
     organizations = Organization.read_organizations()[:limit]
     return jsonify(organizations), 200
-
 
 
 @app.get("/Organizations/TicketCounts")
@@ -329,10 +343,10 @@ def read_departments():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
-    try:
-        limit = request.args.get('limit', default=10, type=int)
-    except ValueError:
-        return jsonify({'error': 'Invalid limit value'}), 400
+    limit, error, status = get_int_arg(request, 'limit', 10, True)
+    if error:
+        return error, status
+
     departments = Department.read_departments()[:limit]
     return jsonify(departments), 200
 
