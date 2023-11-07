@@ -65,13 +65,6 @@ def select_technicians():
     limit, error, status = get_int_arg(request, 'limit', 10, True)
     if error:
         return error, status
-    
-
-    # try:
-    #     limit = int(request.args.get('limit', 10))
-    # except ValueError:
-    #     # Return an error response
-    #     return jsonify({'error': 'Invalid limit value'}), 400
 
     technicians = Technician.select_technicians(limit)
     return jsonify(technicians), 200
@@ -153,7 +146,7 @@ def update_technician_manager():
     if update is not None:
         return jsonify(update), 200
     else:
-        return f"Error: Provided technician_id or manager_user_id value does not exist", 404
+        return jsonify(f"Error: Provided technician_id or manager_user_id value does not exist"), 404
 
 #TicketLine GET Calls
 @app.get("/TicketLines")
