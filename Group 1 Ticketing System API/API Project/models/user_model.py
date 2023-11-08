@@ -52,22 +52,25 @@ class User(Base):
     
     #show (param) of records in the User tables
     @classmethod
-    def read_users(cls):
+    def read_users(cls, start, limit):
         with cls.Session() as session:
-            query = session.query(cls).all()
+            query = session.query(cls)
+            if start is not None:
+                query = query.offset(start)
+            if limit is not None:
+                query = query.limit(limit)
             users = []
-            for row in query:
+            for row in query.all():
                 user = {
-                    
                     'Organization ID' : row.organization_id,
                     'Department ID' : row.department_id,
                     'Last Name' : row.last_name,
                     'First Name' : row.first_name,
                     'Phone Number' : row.phone_number,
                     'Email Address' : row.email_address,
-                    'Title' : row.title}
+                    'Title' : row.title
+                }
                 users.append(user)
-
         return users
     
     #delete a record in the User table

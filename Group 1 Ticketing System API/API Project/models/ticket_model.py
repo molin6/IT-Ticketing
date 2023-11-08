@@ -2,6 +2,7 @@ from sqlalchemy import Column, String, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
 from models.base_model import Base
 from datetime import datetime
+from dateutil.parser import parse
 
 class Ticket(Base):
     __tablename__ = 'fact_tickets'
@@ -28,12 +29,15 @@ class Ticket(Base):
 
     #show (param) of records in the Ticket tables
     @classmethod
-    def read_tickets(cls):
+    def read_tickets(cls, start, limit):
         with cls.Session() as session:
-            query = session.query(cls).all()
+            query = session.query(cls)
+            if start is not None:
+                query = query.offset(start)
+            if limit is not None:
+                query = query.limit(limit)
             tickets = []
-            for row in query:
-
+            for row in query.all():
                 ticket = {
                     'Ticket ID' : row.ticket_id, 
                     'User ID' : row.user_id, 
@@ -46,15 +50,16 @@ class Ticket(Base):
                     'Description' : row.description, 
                     'Subject' : row.subject}
                 tickets.append(ticket)
-
         return tickets
     
     #Adds a new ticket
     @classmethod
     def create_ticket(cls, ticket_data):
         with cls.Session() as session:
-            open_date_time1 = datetime.strptime(ticket_data['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
-            close_date_time1 = datetime.strptime(ticket_data['close_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
+            # open_date_time1 = datetime.strptime(ticket_data['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
+            # close_date_time1 = datetime.strptime(ticket_data['close_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
+            open_date_time1 = parse(ticket_data['open_date_time'])
+            close_date_time1 = parse(ticket_data['close_date_time'])
             new_ticket = cls(user_id=ticket_data['user_id']
                              , department_id=ticket_data['department_id']
                              , prior_ticket_id=ticket_data['prior_ticket_id']
@@ -67,7 +72,8 @@ class Ticket(Base):
             session.add(new_ticket)
             session.commit()
             session.refresh(new_ticket)
-            return new_ticket
+
+            return new_ticket.as_dict()
         
 
     #Updates a ticket
@@ -75,8 +81,10 @@ class Ticket(Base):
     def update_ticket(cls, ticket_id, ticket_data):
         with cls.Session() as session:
             ticket = session.query(cls).filter(cls.ticket_id == ticket_id).first()
-            open_date_time1 = datetime.strptime(ticket_data['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
-            close_date_time1 = datetime.strptime(ticket_data['close_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
+            # open_date_time1 = datetime.strptime(ticket_data['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
+            # close_date_time1 = datetime.strptime(ticket_data['close_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
+            open_date_time1 = parse(ticket_data['open_date_time'])
+            close_date_time1 = parse(ticket_data['close_date_time'])
             ticket.user_id = ticket_data['user_id']
             ticket.department_id = ticket_data['department_id']
             ticket.prior_ticket_id = ticket_data['prior_ticket_id']
@@ -88,6 +96,6 @@ class Ticket(Base):
             ticket.subject = ticket_data['subject']
             session.commit()
             session.refresh(ticket)
-            return ticket
+            return ticket.as_dict()
 
         

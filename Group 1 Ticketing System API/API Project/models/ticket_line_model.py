@@ -20,20 +20,21 @@ class TicketLine(Base):
     
     #show (param) of records in the Ticket Line tables
     @classmethod
-    def read_ticket_lines(cls):
-        
+    def read_ticket_lines(cls, start, limit):
         with cls.Session() as session:
-            query = session.query(cls).all()
+            query = session.query(cls)
+            if start is not None:
+                query = query.offset(start)
+            if limit is not None:
+                query = query.limit(limit)
             ticket_lines = []
-            for row in query:
+            for row in query.all():
                 ticket_line = {
-                'Ticket ID' : row.ticket_id,
-                'Technician ID' : row.technician_id,
-                'Assignment Date Time' : row.assignment_date_time,
-                'Completion Date Time' : row.completion_date_time,
-                'Notes' : row.notes
+                    'Ticket ID' : row.ticket_id,
+                    'Technician ID' : row.technician_id,
+                    'Assignment Date Time' : row.assignment_date_time,
+                    'Completion Date Time' : row.completion_date_time,
+                    'Notes' : row.notes
                 }
-                
                 ticket_lines.append(ticket_line)
-
         return ticket_lines
