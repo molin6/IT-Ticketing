@@ -47,17 +47,21 @@ class Department(Base):
     
     #show (param) of records in the Department tables
     @classmethod
-    def read_departments(cls):
+    def read_departments(cls, start, limit):
         with cls.Session() as session:
-            query = session.query(cls).all()
+            query = session.query(cls)
+            if start is not None:
+                query = query.offset(start)
+            if limit is not None:
+                query = query.limit(limit)
             departments = []
-            for row in query:
+            for row in query.all():
                 department = {
-                'Department ID' : row.department_id, 
-                 'Organization ID' : row.organization_id, 
-                 'Name' : row.name, 
-                 'Phone Number' : row.phone_number, 
-                 'Email Address' : row.email_address}
+                    'Department ID' : row.department_id, 
+                    'Organization ID' : row.organization_id, 
+                    'Name' : row.name, 
+                    'Phone Number' : row.phone_number, 
+                    'Email Address' : row.email_address
+                }
                 departments.append(department)
-
         return departments

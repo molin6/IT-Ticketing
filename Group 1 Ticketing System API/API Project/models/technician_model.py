@@ -29,7 +29,9 @@ class Technician(Base):
             for row in query:
                 technician = {
                     'first_name': row.first_name,
-                    'last_name': row.last_name
+                    'last_name': row.last_name,
+                    'technician_id': row.technician.technician_id,
+                    'technician_user_id': row.technician.technician_user_id
                 }
                 technicians.append(technician)
 
@@ -94,17 +96,22 @@ class Technician(Base):
         return techniciantickets
     
     @classmethod
-    def select_technicians(cls, limit):
+    def select_technicians(cls, start, limit):
         with cls.Session() as session:
-            query = session.query(cls).limit(limit).all()
+            query = session.query(cls, User).join(User, User.user_id == cls.technician_user_id).offset(start).limit(limit).all()
             technicians = []
             for row in query:
-                technician = {
-                    'technician_id': row.technician_id,
-                    'technician_user_id': row.technician_user_id,
-                    'manager_user_id': row.manager_user_id
+                technician, user = row
+                technician_data = {
+                    'technician_id': technician.technician_id,
+                    'technician_user_id': technician.technician_user_id,
+                    'manager_user_id': technician.manager_user_id,
+                    'technician_user_data': {column.name: getattr(user, column.name) for column in User.__table__.columns}
                 }
-                technicians.append(technician)
+                manager = session.query(User).filter(User.user_id == technician.manager_user_id).one_or_none()
+                if manager is not None:
+                    technician_data['manager_user_data'] = {column.name: getattr(manager, column.name) for column in User.__table__.columns}
+                technicians.append(technician_data)
         return technicians
     
     @classmethod
@@ -112,33 +119,32 @@ class Technician(Base):
         with cls.Session() as session:
             try:
                 # Check if the technician exists
-                session.query(Technician).filter(Technician.technician_id == technician_id).one()
+                technician_user = session.query(User).join(Technician, Technician.technician_user_id == User.user_id).filter(Technician.technician_id == technician_id).one()
             except NoResultFound:
                 # If the technician doesn't exist, return None
                 return None
 
             try:
                 # Check if the manager exists
-                # session.query(User).filter(User.user_id == manager_user_id).one()
-                result = session.query(User).filter(User.user_id == manager_user_id).one_or_none()
+                manager = session.query(User).filter(User.user_id == manager_user_id).one_or_none()
             except NoResultFound:
                 # If the manager doesn't exist, return None
                 return None
-            if result is None:
+            if manager is None:
                 return None
 
             technician = session.query(cls).filter(cls.technician_id == technician_id).first()
             technician.manager_user_id = manager_user_id
             session.commit()
 
-            for row in session.query(cls).filter(cls.technician_id == technician_id).all():
-                technician = {
-                    'technician_id': row.technician_id,
-                    'technician_user_id': row.technician_user_id,
-                    'manager_user_id': row.manager_user_id
-                }
+            manager_data = {column.name: getattr(manager, column.name) for column in User.__table__.columns}
+            technician_data = {column.name: getattr(technician_user, column.name) for column in User.__table__.columns}
 
-            return technician
+            return {
+                'technician_id': technician.technician_id,
+                'technician': technician_data,
+                'new_manager': manager_data
+            }
 
     @classmethod
     def get_technicians_manager(cls, technician_id):

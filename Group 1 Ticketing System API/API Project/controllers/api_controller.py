@@ -62,11 +62,15 @@ def select_technicians():
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
 
+    start, error, status = get_int_arg(request, 'start', 0, True)
+    if error:
+        return error, status
+
     limit, error, status = get_int_arg(request, 'limit', 10, True)
     if error:
         return error, status
 
-    technicians = Technician.select_technicians(limit)
+    technicians = Technician.select_technicians(start, limit)
     return jsonify(technicians), 200
 @app.get("/Technicians/Names")
 def read_technician_names():
@@ -96,7 +100,7 @@ def read_technician_ticketinfo():
     if ticket_info is not None:
         return jsonify(ticket_info), 200
     else:
-        return f"Error: Technician doesn't exist for technician_id {technician_id}", 404
+        return jsonify(f"Error: Technician doesn't exist for technician_id {technician_id}"), 404
 @app.get("/Technicians/Manager")
 def get_technicians_manager():
     '''
@@ -114,7 +118,7 @@ def get_technicians_manager():
     if manager is not None:
         return jsonify(manager), 200
     else:
-        return f"Error: Technician with technician_id {technician_id} either does not exist, or their manager does not exist", 404
+        return jsonify(f"Error: Technician with technician_id {technician_id} either does not exist, or their manager does not exist"), 404
 
 
     
@@ -157,11 +161,16 @@ def read_ticket_lines():
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
 
+    start, error, status = get_int_arg(request, 'start', 0, True)
+    if error:
+        return error, status
+
     limit, error, status = get_int_arg(request, 'limit', 10, True)
     if error:
         return error, status
 
-    ticket_lines = TicketLine.read_ticket_lines()[:limit]
+    ticket_lines = TicketLine.read_ticket_lines(start, limit)
+    # ticket_lines = TicketLine.read_ticket_lines()[:limit]
     return jsonify(ticket_lines), 200
 
 #Ticket GET Calls
@@ -172,11 +181,16 @@ def read_tickets():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
+
+    start, error, status = get_int_arg(request, 'start', 0, True)
+    if error:
+        return error, status
+    
     limit, error, status = get_int_arg(request, 'limit', 10, True)
     if error:
         return error, status
     
-    tickets = Ticket.read_tickets()[:limit]
+    tickets = Ticket.read_tickets(start, limit)
     return jsonify(tickets), 200
 
 
@@ -208,7 +222,7 @@ def create_ticket():
     '''
     ticket_data = request.get_json()
     new_ticket = Ticket.create_ticket(ticket_data)
-    return 'Successfully added a new ticket', 200
+    return jsonify(new_ticket), 200
     #return jsonify(new_ticket.as_dict()), 200
 
 #Ticket PUT Calls
@@ -247,10 +261,10 @@ def update_ticket():
     if error:
         return error, status
 
-    working = Ticket.update_ticket(ticket_id, ticket_data)
+    updated_ticket = Ticket.update_ticket(ticket_id, ticket_data)
 
-    if working is not None:
-        return 'Successfully updated the ticket', 200
+    if updated_ticket is not None:
+        return jsonify(updated_ticket), 200
     else:
         return 'Ticket is not updated', 500
 
@@ -262,11 +276,15 @@ def read_users():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
+    start, error, status = get_int_arg(request, 'start', 0, True)
+    if error:
+        return error, status
+
     limit, error, status = get_int_arg(request, 'limit', 10, True)
     if error:
         return error, status
 
-    users = User.read_users()[:limit]
+    users = User.read_users(start, limit)
     return jsonify(users), 200
 
 @app.get("/Users/TicketCounts")
@@ -275,8 +293,6 @@ def read_user_ticket_counts():
     TODO: Insert tooltip documentation here
     params: user_id - optional parameter for the id of the user to retrieve the ticket count information
     '''
-
-
     user_id, error, status = get_int_arg(request, 'user_id')
     if error:
         return error, status
@@ -303,8 +319,7 @@ def delete_user():
         # An error occurred, return the error message and status code
         return jsonify(result), result.get('status', 500)
     else:
-        return 'User deleted Successfully!', 200
-
+        return jsonify({'message': 'User deleted Successfully!', 'status': 200}), 200
 #Organization GET Calls
 @app.get("/Organizations")
 def read_organizations():
@@ -313,11 +328,16 @@ def read_organizations():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
+
+    start, error, status = get_int_arg(request, 'start', 0, True)
+    if error:
+        return error, status
+    
     limit, error, status = get_int_arg(request, 'limit', 10, True)
     if error:
         return error, status
 
-    organizations = Organization.read_organizations()[:limit]
+    organizations = Organization.read_organizations(start, limit)
     return jsonify(organizations), 200
 
 
@@ -336,11 +356,15 @@ def read_departments():
 
     params: limit - optional parameter to limit the number of results returned, default is 10
     '''
+    start, error, status = get_int_arg(request, 'start', 0, True)
+    if error:
+        return error, status
+
     limit, error, status = get_int_arg(request, 'limit', 10, True)
     if error:
         return error, status
 
-    departments = Department.read_departments()[:limit]
+    departments = Department.read_departments(start, limit)
     return jsonify(departments), 200
 
 

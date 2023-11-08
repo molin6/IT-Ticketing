@@ -45,11 +45,15 @@ class Organization(Base):
     
     #show (param) of records in the Organization tables
     @classmethod
-    def read_organizations(cls):
+    def read_organizations(cls, start, limit):
         with cls.Session() as session:
-            query = session.query(cls).all()
+            query = session.query(cls)
+            if start is not None:
+                query = query.offset(start)
+            if limit is not None:
+                query = query.limit(limit)
             organizations = []
-            for row in query:
+            for row in query.all():
                 organization = {
                     'Organization ID' : row.organization_id, 
                     'Name' : row.name, 
@@ -60,5 +64,4 @@ class Organization(Base):
                     'ZipCode' : row.zip_code, 
                     'Street Adress' : row.street_address}
                 organizations.append(organization)
-
         return organizations
