@@ -1,70 +1,87 @@
 import textwrap
+
 screen_width = 100
 boundary_marker = "|"
 divider_char = "*"
 
-# def print_menu_options(options):
-#     blank_line()
-#     options_text = " | ".join(options)
-#     centered_text = options_text.center(screen_width - 4)  # Subtract 4 for the boundary markers and padding
-#     wrapped_lines = textwrap.wrap(centered_text, width=screen_width - 4, break_long_words=False, replace_whitespace=False)
-#     for line in wrapped_lines:
-#         padded_line = line.ljust(screen_width - 2)  # Add padding to the right
-#         bounded_line = '*' + padded_line + '*'
-#         print(bounded_line)
-#     blank_line()
-#     divider()
-#     blank_line()
+def print_text(args, alignment='center'):
+    # Validate alignment input
+    if alignment not in ['center', 'left', 'right']:
+        raise ValueError("alignment must be 'center', 'left', or 'right'")
 
+    if not isinstance(args, list) and not isinstance(args, str):
+        raise TypeError("text must be a string or a list of strings")
 
+    def align_text(text, available_width, alignment):
+        if alignment == 'center':
+            return text.center(available_width)
+        elif alignment == 'left':
+            return text.ljust(available_width)
+        elif alignment == 'right':
+            return text.rjust(available_width)
 
+    if isinstance(args, str):
+        aligned_text = align_text(args, screen_width - 2, alignment)
+        bounded_text = boundary_marker + aligned_text + boundary_marker
+        print(bounded_text)
+        return
 
+    if isinstance(args, list):
+        available_width = screen_width - 2
+        # Start with an empty line
+        current_line = ""
+        for i, item in enumerate(args):
+            # Add divider if not the first item in the line
+            if current_line:
+                item_with_divider = " " + boundary_marker + " " + item
+            else:
+                item_with_divider = item
 
-def centered_text(text):
-    aligned_text = text.center(screen_width - 2)
-    bounded_text = boundary_marker + aligned_text + boundary_marker
-    print(bounded_text)
+            # Check if the item fits in the current line
+            if len(current_line) + len(item_with_divider) <= available_width:
+                current_line += item_with_divider
+            else:
+                aligned_text = align_text(current_line, available_width, alignment)
+                bounded_text = boundary_marker + aligned_text + boundary_marker
+                print(bounded_text)
+               
+                # Start a new line with the current item
+                current_line = item
 
-def left_aligned_text(text):
-    aligned_text = text.ljust(screen_width - 2)
-    bounded_text = boundary_marker + aligned_text + boundary_marker
-    print(bounded_text)
+        # Print any remaining text in the current line
+        if current_line:
+            aligned_text = align_text(current_line, available_width, alignment)
+            bounded_text = boundary_marker + aligned_text + boundary_marker
+            print(bounded_text)
 
-def right_aligned_text(text):
-    aligned_text = text.rjust(screen_width - 2)
-    bounded_text = boundary_marker + aligned_text + boundary_marker
-    print(bounded_text)
-
-def divider():
+def print_divider():
     print(boundary_marker + divider_char * (screen_width - 2) + boundary_marker)
 
-def blank_line():
+def print_blank_line():
     print(boundary_marker + " " * (screen_width - 2) + boundary_marker)
 
 def print_main_header():
-    blank_line()
-    centered_text("Group 1 API Project - Ticket Viewer")
-    blank_line()
-    divider()
-    blank_line()
+    print_blank_line()
+    print_text("Group 1 API Project - Ticket Viewer")
+    print_blank_line()
+    print_divider()
 
 def print_footer():
-    blank_line()
-    divider()
-    blank_line()
-    centered_text("End of Ticket Viewer")
-    blank_line()
+    print_blank_line()
+    print_divider()
+    print_blank_line()
+    print_text("End of Ticket Viewer")
+    print_blank_line()
 
 def print_view_header(text):
-    blank_line()
-    centered_text(text)
-    blank_line()
-    divider()
-    blank_line()
+    print_blank_line()
+    print_text(text)
+    print_blank_line()
+    print_divider()
 
 def print_error(error):
-    blank_line()
-    left_aligned_text("Error: " + error)
-    blank_line()
-    divider()
-    blank_line()
+    print_blank_line()
+    print_text("Error: " + error, 'left')
+    print_blank_line()
+    print_divider()
+    print_blank_line()
