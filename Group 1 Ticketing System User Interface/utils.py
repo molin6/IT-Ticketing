@@ -1,10 +1,6 @@
-import textwrap
+from tabulate import tabulate
 
-screen_width = 100
-boundary_marker = "|"
-divider_char = "*"
-
-def print_text(args, alignment='center'):
+def print_text(args = "", alignment='center', tab_spaces=0, screen_width=100, border_marker_char="|", line_divider_char="*", item_divider_char="|"):
     # Validate alignment input
     if alignment not in ['center', 'left', 'right']:
         raise ValueError("alignment must be 'center', 'left', or 'right'")
@@ -13,6 +9,9 @@ def print_text(args, alignment='center'):
         raise TypeError("text must be a string or a list of strings")
 
     def align_text(text, available_width, alignment):
+        # Add the specified number of spaces to the front of the text
+        text = ' ' * (tab_spaces * 4) + text
+
         if alignment == 'center':
             return text.center(available_width)
         elif alignment == 'left':
@@ -22,7 +21,7 @@ def print_text(args, alignment='center'):
 
     if isinstance(args, str):
         aligned_text = align_text(args, screen_width - 2, alignment)
-        bounded_text = boundary_marker + aligned_text + boundary_marker
+        bounded_text = border_marker_char + aligned_text + border_marker_char
         print(bounded_text)
         return
 
@@ -33,7 +32,7 @@ def print_text(args, alignment='center'):
         for i, item in enumerate(args):
             # Add divider if not the first item in the line
             if current_line:
-                item_with_divider = " " + boundary_marker + " " + item
+                item_with_divider = " " + item_divider_char + " " + item
             else:
                 item_with_divider = item
 
@@ -42,7 +41,7 @@ def print_text(args, alignment='center'):
                 current_line += item_with_divider
             else:
                 aligned_text = align_text(current_line, available_width, alignment)
-                bounded_text = boundary_marker + aligned_text + boundary_marker
+                bounded_text = border_marker_char + aligned_text + border_marker_char
                 print(bounded_text)
                
                 # Start a new line with the current item
@@ -51,37 +50,63 @@ def print_text(args, alignment='center'):
         # Print any remaining text in the current line
         if current_line:
             aligned_text = align_text(current_line, available_width, alignment)
-            bounded_text = boundary_marker + aligned_text + boundary_marker
+            bounded_text = border_marker_char + aligned_text + border_marker_char
             print(bounded_text)
 
-def print_divider():
-    print(boundary_marker + divider_char * (screen_width - 2) + boundary_marker)
+def print_divider(screen_width=100, line_divider_char="*", item_divider_char="|"):
+    print_text(line_divider_char * (screen_width - 2), screen_width=screen_width, line_divider_char=line_divider_char, item_divider_char=item_divider_char)
 
-def print_blank_line():
-    print(boundary_marker + " " * (screen_width - 2) + boundary_marker)
+def print_blank_line(screen_width=100, border_marker_char="|", item_divider_char="|"):
+    print_text(screen_width=screen_width, border_marker_char=border_marker_char, item_divider_char=item_divider_char)
 
-def print_main_header():
-    print_blank_line()
-    print_text("Group 1 API Project - Ticket Viewer")
-    print_blank_line()
-    print_divider()
+def print_text_block(header = "", text = "", footer = "", top_border = True, bottom_border = True, screen_width=100, border_marker_char="|", line_divider_char="*", item_divider_char="|"):
+    if top_border:
+        print_divider(screen_width=screen_width, line_divider_char=line_divider_char, item_divider_char=item_divider_char)
 
-def print_footer():
-    print_blank_line()
-    print_divider()
-    print_blank_line()
-    print_text("End of Ticket Viewer")
-    print_blank_line()
+    print_blank_line(screen_width=screen_width, border_marker_char=border_marker_char, item_divider_char=item_divider_char)
 
-def print_view_header(text):
-    print_blank_line()
-    print_text(text)
-    print_blank_line()
-    print_divider()
+    if header:
+        print_text(header, screen_width=screen_width, border_marker_char=border_marker_char, item_divider_char=item_divider_char)
 
-def print_error(error):
-    print_blank_line()
-    print_text("Error: " + error, 'left')
-    print_blank_line()
-    print_divider()
-    print_blank_line()
+    if text:
+        print_text(text, screen_width=screen_width, border_marker_char=border_marker_char, item_divider_char=item_divider_char)
+
+    print_blank_line(screen_width=screen_width, border_marker_char=border_marker_char, item_divider_char=item_divider_char)
+
+    if footer:
+        print_text(footer, screen_width=screen_width, border_marker_char=border_marker_char, item_divider_char=item_divider_char)
+
+    if bottom_border:
+        print_divider(screen_width=screen_width, line_divider_char=line_divider_char, item_divider_char=item_divider_char)
+
+def print_json_in_table_format(json_object, ordered_keys=None, rename_keys=None, tablefmt='fancy_grid', screen_width=100, border_marker_char="|"):
+    table = []
+    keys = ordered_keys if ordered_keys else json_object.keys()
+    for key in keys:
+        value = json_object.get(key)
+        if rename_keys and key in rename_keys:
+            key = rename_keys[key]
+        if value is not None and isinstance(value, dict):
+            for sub_key, sub_value in value.items():
+                if rename_keys and sub_key in rename_keys:
+                    sub_key = rename_keys[sub_key]
+                table.append([sub_key, sub_value])
+        else:
+            table.append([key, value])
+    table_string = tabulate(table, tablefmt=tablefmt)
+    
+    table_lines = table_string.split('\n')
+    for line in table_lines:
+        print_text(line, screen_width=screen_width, border_marker_char=border_marker_char, alignment='left')
+    
+    
+    # print(bordered_table_string)
+
+def add_border_to_string(s, border_marker_char='|', padding=2):
+    lines = s.split('\n')
+    for line in lines:
+        print_text(line, screen_width=screen_width, border_marker_char=border_marker_char)
+
+
+    # lines = [f"{border_marker_char}{line.center(width)}{border_marker_char}" for line in lines]
+    return f"{border_line}\n" + "\n".join(lines) + f"\n{border_line}"
