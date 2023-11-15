@@ -2,3 +2,4 @@ sqlalchemy_utils
 Faker
 fastapi[all]
 Flask
+tabulate

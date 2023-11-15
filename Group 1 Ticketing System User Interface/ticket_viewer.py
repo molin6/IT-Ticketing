@@ -1,41 +1,30 @@
-import utils
-api_url_base = "http://localhost:5000"
+from utils import TextPrintUtils as utils
+from views import technician_view
 
-quit = False
+api_url_base = "http://localhost:5000/"
+
 index = 0
 
-menu_options = ["1. View all tickets", "2. View a ticket", "0. Quit"]
+menu_options = ["1. Technicians", "0. Quit"]
 
 def run_ticket_system():
-    utils.print_divider()
-    utils.print_main_header()
-    utils.print_view_header("Main Menu")
-    global quit
-    global index
+    utils.print_text_block("Group 1 API Project - Ticket Viewer")
+    utils.print_text_block("Main Menu", top_border = False, bottom_border = False)
+
+    quit = False
     while not quit:
-        utils.print_blank_line()
-        utils.print_text("Menu Options:")
-        utils.print_text(menu_options)
-        utils.print_blank_line()
-        utils.print_divider()
+        utils.print_text_block("Menu Options:", menu_options)
         user_input = input("Enter a command: ")
+
         if user_input == "1":
-            print("You selected Option 1.")
-            # Add code to handle Option 1 here.
-        elif user_input == "2":
-            print("You selected Option 2.")
-            # Add code to handle Option 2 here.
-        elif user_input == "3":
+            technician_view.run(api_url_base)
+        elif user_input == "0":
             print("Exiting the system.")
             quit = True
         else:
             print("Invalid command. Please try again.")
 
-
+        options = TextPrintOptions(top_border=True, bottom_border=False)
+        utils.print_text_block("Main Menu", options)
 
 run_ticket_system()
-
-
-
-
-
