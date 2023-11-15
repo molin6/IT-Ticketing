@@ -1,45 +1,58 @@
-import utils
+from utils import TextPrintUtils as utils
 import requests
+from utils.TextPrintOptions import PrintOptions
+from utils.TextPrintOptions import Term
 
 def display_technicians():
     url = f"{api_url_base}Technicians"
-    response = requests.get(url)
     params = {}
     data = {}
     response = requests.get(url, params=params, data=data)
+
     if response.status_code == 200:
         technicians = response.json()
+        options = PrintOptions(border_marker_color=Term.GREEN, line_divider_color=Term.GREEN)
+        utils.print_divider(options=options)
+
         for technician in technicians:
 
+            options.alignment = 'center'
+            options.text_color = Term.BLUE_BOLD
+            utils.print_text(f"Displaying Technician: {technician['technician_user_data']['first_name']} {technician['technician_user_data']['last_name']}", options)
 
+            options.line_divider_char = '-'
+            utils.print_divider(options=options)
 
+            utils.print_blank_line(options=options)
 
-            utils.print_text(f"Displaying Technician: {technician['technician_user_data']['first_name']} {technician['technician_user_data']['last_name']}", alignment = 'left')
+            ordered_keys = ['technician_id', 'technician_user_id', 'manager_user_id']
+            rename_keys = {'technician_id': 'Technician Id', 'technician_user_id': 'Technician User Id', 'manager_user_id': 'Technician\'s Manager\'s Id'}
 
-            ordered_keys = ['technician_id', 'first_name', 'last_name']
-            rename_keys = {'technician_id': 'Technician Id', 'first_name': 'First Name', 'last_name': 'Last Name'}
+            options.tab_spaces = 0
+            options.alignment = 'left'
+            options.text_color = Term.GREEN
+            utils.print_json_in_table_format(technician, ordered_keys, rename_keys, options=options)
 
-            utils.print_json_in_table_format(technician['technician_user_data'], ordered_keys, rename_keys)
+            ordered_keys = ['first_name', 'last_name', 'title', 'email_address', 'phone_number', 'organization_id']
+            rename_keys = {'first_name': 'First Name'
+                            , 'last_name': 'Last Name'
+                            , 'title': 'Title'
+                            , 'email_address': 'Email Address'
+                            , 'phone_number': 'Phone #'
+                            , 'organization_id': 'Organization Id'
+                        }
 
-            # utils.print_text(f"Displaying Technician: {technician['technician_user_data']['first_name']} {technician['technician_user_data']['last_name']}", alignment = 'left')
+            options.tab_spaces = 1
+            utils.print_json_in_table_format(technician['technician_user_data'], ordered_keys, rename_keys, options=options)
 
-            # utils.print_text(f"Technician Id: {technician['technician_id']}", tab_spaces = 1, alignment = 'left')
-            # utils.print_text(f"User Id: {technician['technician_user_data']['user_id']}", tab_spaces = 1, alignment = 'left')
-            # utils.print_text(f"First Name: {technician['technician_user_data']['first_name']}", tab_spaces = 1, alignment = 'left')
-            # utils.print_text(f"Last Name: {technician['technician_user_data']['last_name']}", tab_spaces = 1, alignment = 'left')
-            # utils.print_text(f"Title: {technician['technician_user_data']['title']}", tab_spaces = 1, alignment = 'left')
-            # utils.print_text(f"Email Address: {technician['technician_user_data']['email_address']}", tab_spaces = 1, alignment = 'left')
-            # utils.print_text(f"Phone Number: {technician['technician_user_data']['phone_number']}", tab_spaces = 1, alignment = 'left')
-            # utils.print_text(f"Organization Id: {technician['technician_user_data']['organization_id']}", tab_spaces = 1, alignment = 'left')
-
-            # utils.print_text(f"Manager's User Id: {technician['manager_user_id']}", tab_spaces = 2, alignment = 'left')
-            utils.print_blank_line()
-
-
+            options.tab_spaces = 0
+            utils.print_blank_line(options=options)
+            utils.print_divider(options=options)
 
     else:
         print(f"{response.json()}; Error code: {response.status_code}")
 
+    print()
 
 def run(base_url):
     global api_url_base
@@ -60,25 +73,3 @@ def run(base_url):
             quit = True
         else:
             print("Invalid command. Please try again.")
-
-
-
-
-
-# def print_technician_names(technician_names):
-
-#     max_length = max(len(name) for name in technician_names)
-#     return_array = []
-
-#     header_length = len('Technicians')
-#     if header_length > max_length:
-#         max_length = header_length
-#     header_space = max_length - header_length
-#     header_sides = header_space // 2
-#     return_array.append(f'+ {"-" * max_length} +')
-#     return_array.append(f'| {" " * header_sides}Technicians{" " * header_sides} |')
-#     return_array.append(f'+ {"-" * max_length} +')
-#     for name in technician_names:
-#         return_array.append(f'| {name.ljust(max_length)} |')
-#     return_array.append(f'+ {"-" * max_length} +')
-#     return return_array
