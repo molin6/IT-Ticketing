@@ -1,6 +1,7 @@
 from utils import TextPrintUtils as utils
 from views import technician_view
-from funct import Ticket_ViewCreateDelteUpdate, create_ticket, delete_ticket, modify_ticket, view_ticket
+from funct import Ticket_ViewCreateDelteUpdate
+import json
 
 api_url_base = "http://localhost:5000/"
 
@@ -22,40 +23,63 @@ def run_ticket_system():
             print("1. Create a Ticket")
             print("2. Delete a Ticket")
             print("3. Modify a Ticket")
-            print("4. View a Ticket")
-            print("5. Exit")
+            print("4. View a Ticket/Tickets")
+            print("0. Exit")
 
-            choice = input("Enter your choice (1-5): ")
+            choice = input("Enter your choice: ")
 
             if choice == "1":
-                create_ticket()
+                Ticket_ViewCreateDelteUpdate.create_ticket()
 
             elif choice == "2":
                 ticket_id = input("Enter the Ticket ID to delete: ")
-                result = delete_ticket(ticket_id)
+                result = Ticket_ViewCreateDelteUpdate.delete_ticket(ticket_id)
                 print(result)
 
             elif choice == "3":
-                ticket_id = input("Enter the Ticket ID to modify: ")
-                ticket_data = {
-                    "user_id": int(input("Enter User ID: ")),
-                    "department_id": int(input("Enter Department ID: ")),
-                    # Add other fields as needed
-                }
-                result = modify_ticket(ticket_id, ticket_data)
-                print(result)
-
-            elif choice == "4":
-                ticket_id = input("Enter the Ticket ID to view: ")
-                ticket_info = view_ticket(ticket_id)
+                ticket_id = input("Enter the Ticket ID to view and modify: ")
+                ticket_info = Ticket_ViewCreateDelteUpdate.view_ticket(ticket_id)
+                print("Ticket Details:")
                 print(json.dumps(ticket_info, indent=2))
 
-            elif choice == "5":
+                modify_choice = input("Do you want to modify this ticket? (yes/no): ").lower()
+                if modify_choice == "yes":
+                    ticket_data = {
+                        "user_id": int(input("Enter User ID: ")),
+                        "department_id": int(input("Enter Department ID: ")),
+                        "prior_ticket_id": int(input("Enter Prior Ticket ID: ")),
+                        "ticket_category": input("Enter Ticket Category: "),
+                        "description": input("Enter Description: "),
+                        "subject": input("Enter Subject: ")
+                    }
+                    result = Ticket_ViewCreateDelteUpdate.modify_ticket(ticket_id, ticket_data)
+                    print(result)
+                    if "Successfully updated the ticket" in result:
+                        print("Ticket updated successfully!")
+                    else:
+                        print("Failed to update the ticket.")
+                        break  # Exit the loop after modifying the ticket
+                else:
+                    print("Ticket not modified.")
+                    break
+
+
+            elif choice == "4":
+                view_choice = input("Do you want to view one ticket or all tickets? (one/all): ").lower()
+
+                if view_choice == "one":
+                    ticket_id = input("Enter the Ticket ID to view: ")
+                    ticket_info = Ticket_ViewCreateDelteUpdate.view_ticket(ticket_id)
+                    print(json.dumps(ticket_info, indent=2))
+                elif view_choice == "all":
+                    Ticket_ViewCreateDelteUpdate.view_all_tickets()
+                else:
+                    print("Invalid choice. Please enter 'one' or 'all'.")
+                    
+            elif choice == "0":
                 print("Exiting the Ticket Management System. Goodbye!")
                 break
 
-            else:
-                print("Invalid choice. Please enter a number between 1 and 5.")
         elif user_input == "2":
             technician_view.run(api_url_base)
         elif user_input == "0":

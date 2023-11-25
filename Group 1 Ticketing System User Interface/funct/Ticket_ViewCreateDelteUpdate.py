@@ -45,6 +45,11 @@ def delete_ticket(ticket_id):
     return response.text
 
 def modify_ticket(ticket_id, ticket_data):
+
+    ticket_data.pop("open_date_time", None)
+    ticket_data.pop("close_date_time", None)
+    ticket_data.pop("status", None)
+
     url = f"{BASE_URL}/Tickets?ticket_id={ticket_id}"
     headers = {"Content-Type": "application/json"}
     response = requests.put(url, data=json.dumps(ticket_data), headers=headers)
@@ -54,6 +59,30 @@ def view_ticket(ticket_id):
     url = f"{BASE_URL}/Tickets?ticket_id={ticket_id}"
     response = requests.get(url)
     return response.json()
+
+def view_all_tickets():
+    limit = 10
+    offset = 0
+
+    while True:
+        # Get the next batch of tickets
+        url = f"{BASE_URL}/Tickets?limit={limit}&offset={offset}"
+        response = requests.get(url)
+        tickets = response.json()
+
+        if not tickets:
+            print("No more tickets to display.")
+            break
+
+        print("Tickets:")
+        for ticket in tickets:
+            print(json.dumps(ticket, indent=2))
+
+        offset += limit
+
+        show_more = input("Do you want to view more tickets? (yes/no): ").lower()
+        if show_more != "yes":
+            break
 
 # def main():
 #     while True:
