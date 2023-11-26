@@ -1,7 +1,7 @@
 import os
+import textwrap
 from tabulate import tabulate
-from .TextPrintOptions import PrintOptions
-from .TextPrintOptions import Term
+from .text_print_options import PrintOptions, Term
 
 def print_text(args = "", options: PrintOptions = None):
     if options is None:
@@ -26,9 +26,20 @@ def print_text(args = "", options: PrintOptions = None):
             return text.rjust(available_width)
 
     if isinstance(args, str):
-        aligned_text = align_text(args, options.screen_width - 2, options.alignment)
-        print(options.border_marker_color + options.border_marker_char + options.text_color + aligned_text + options.border_marker_color + options.border_marker_char + options.text_color)
+        lines = textwrap.wrap(args, options.screen_width - 2)
+        if len(lines) == 0:
+            print(options.border_marker_color + options.border_marker_char + options.text_color + " " * (options.screen_width - 2) + options.border_marker_color + options.border_marker_char + options.text_color)
+        else:
+            for line in lines:
+                aligned_text = align_text(line, options.screen_width - 2, options.alignment)
+                print(options.border_marker_color + options.border_marker_char + options.text_color + aligned_text + options.border_marker_color + options.border_marker_char + options.text_color)
         return
+
+
+    # if isinstance(args, str):
+    #     aligned_text = align_text(args, options.screen_width - 2, options.alignment)
+    #     print(options.border_marker_color + options.border_marker_char + options.text_color + aligned_text + options.border_marker_color + options.border_marker_char + options.text_color)
+    #     return
 
     if isinstance(args, list):
         available_width = options.screen_width - 2
