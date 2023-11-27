@@ -70,7 +70,7 @@ def print_text(args = "", options: PrintOptions = None):
 def print_divider(options: PrintOptions = None):
     if options is None:
         options = PrintOptions()
-    options.text_color = options.line_divider_color
+    # options.text_color = options.line_divider_color
     print_text(options.line_divider_char * (options.screen_width - 2), options)
 
 def print_blank_line(options: PrintOptions = None):
