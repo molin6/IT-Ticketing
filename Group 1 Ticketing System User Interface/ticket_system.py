@@ -11,11 +11,10 @@ index = 0
 menu_options = ["1. Tickets", "2. Technicians", "3. Users", "4. Organizations", "5. Departments", "0. Quit"]
 
 def run_ticket_system():
-    utils.print_text_block("Group 1 API Project - Ticket Viewer")
-    utils.print_text_block("Main Menu", top_border = False, bottom_border = False)
+    utils.print_text_block(header="Group 1 API Project - Ticket Viewer", text="Main Menu", bottom_border=False)
 
     while True:
-        utils.print_text_block("Menu Options:", menu_options)
+        utils.print_text_block("Options:", menu_options)
         user_input = input("Enter a command: ")
 
         if user_input == "1":

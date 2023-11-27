@@ -1,5 +1,6 @@
 import requests
 import json
+from datetime import datetime
 from utils import text_print_utils as utils
 from utils.text_print_options import PrintOptions, Term
 
@@ -9,9 +10,10 @@ def display_technician_information(print_options):
     limit = None
 
     while True:
-        utils.print_text_block("How many technicians would you like to view at a time? Please enter a whole number, or type 'all' to view all technicians.", bottom_border = False, options=options)
+
+        utils.print_text_block(text="How many technicians would you like to view at a time? Please enter a whole number, or type 'all' to view all technicians.", bottom_border = False, options=options)
         utils.print_divider(options=options)
-        user_input = input("Enter a command: ")
+        user_input = utils.get_input("Enter a command: ")
         if user_input == "all":
             limit = None
             break
@@ -41,7 +43,6 @@ def display_technician_information(print_options):
             for technician in technicians:
 
                 options.alignment = 'center'
-                options.text_color = Term.BLUE_BOLD
                 utils.print_text(f"Displaying Technician: {technician['technician_user_data']['first_name']} {technician['technician_user_data']['last_name']}", options)
 
                 options.line_divider_char = '-'
@@ -54,7 +55,6 @@ def display_technician_information(print_options):
 
                 options.tab_spaces = 0
                 options.alignment = 'left'
-                options.text_color = Term.GREEN
                 utils.print_json_in_table_format(technician, ordered_keys, rename_keys, options=options)
 
                 ordered_keys = ['first_name', 'last_name', 'title', 'email_address', 'phone_number', 'organization_id']
@@ -83,9 +83,9 @@ def display_technician_information(print_options):
 
         while True:
             options.alignment = 'center'
-            utils.print_text_block("Would you like to view more technicians? Please enter 'yes' or 'no'.", bottom_border = False, options=options)
+            utils.print_text_block(text="Would you like to view more technicians? Please enter 'yes' or 'no'.", bottom_border = False, options=options)
             utils.print_divider(options=options)
-            user_input = input("Enter a command: ")
+            user_input = utils.get_input("Enter a command: ")
             if user_input == "yes":
                 get_more = True
                 break
@@ -94,8 +94,6 @@ def display_technician_information(print_options):
                 break
             else:
                 print("Invalid input. Please try again.")
-    options.text_color = Term.GREEN
-
 
 def display_technician_names(print_options):
     options = print_options
@@ -109,10 +107,10 @@ def display_technician_names(print_options):
         if len(technicians) == 0:
             print("No technicians found.")
         else:
-            options.text_color = Term.BLUE_BOLD
             utils.print_divider(options=options)
-
-            utils.print_text_block("Current Technicians", top_border=False, bottom_border=False, options=options)
+            print_options = options.copy()
+            print_options.text_color = Term.RESET_BOLD_UNDERLINE
+            utils.print_text_block(text="Current Technicians", top_border=False, bottom_border=False, options=print_options)
 
             technician_dict = {}
             for technician in technicians:
@@ -124,7 +122,6 @@ def display_technician_names(print_options):
             utils.print_divider(options=options)
     else:
         print(f"{response.json()}; Error code: {response.status_code}")
-    options.text_color = Term.GREEN
 
 def display_technician_avg_ticket_times(print_options):
     options = print_options
@@ -137,10 +134,9 @@ def display_technician_avg_ticket_times(print_options):
         if len(technicians) == 0:
             print("No technician times found.")
         else:
-            options.text_color = Term.BLUE_BOLD
             utils.print_divider(options=options)
 
-            utils.print_text_block("Average Ticket Times", top_border=False, bottom_border=False, options=options)
+            utils.print_text_block(text="Average Ticket Times", top_border=False, bottom_border=False, options=options)
 
             technician_dict = {}
             key = "Technician Name"
@@ -155,16 +151,14 @@ def display_technician_avg_ticket_times(print_options):
     else:
         print(f"{response.json()}; Error code: {response.status_code}")
 
-    options.text_color = Term.GREEN
-
 def display_technician_managers(print_options):
     options = print_options
     url = f"{api_url_base}Technicians/Manager"
 
     while True:
-        utils.print_text_block("Please enter the id of the technician whose manager you would like to know.", bottom_border = False, options=options)
+        utils.print_text_block(text="Please enter the id of the technician whose manager you would like to know.", bottom_border = False, options=options)
         utils.print_divider(options=options)
-        user_input = input("Enter a command: ")
+        user_input = utils.get_input("Enter a command: ")
         try:
             technician_id = int(user_input)
             break
@@ -178,11 +172,10 @@ def display_technician_managers(print_options):
 
     if response.status_code == 200:
         technician = response.json()
-        options.text_color = Term.BLUE_BOLD
-        # options = PrintOptions(border_marker_color=Term.GREEN, line_divider_color=Term.GREEN, alignment='center', text_color=Term.BLUE_BOLD)
+
         utils.print_divider(options=options)
 
-        utils.print_text_block("Technician Managers", top_border=False, bottom_border=False, options=options)
+        utils.print_text_block(text="Technician Managers", top_border=False, bottom_border=False, options=options)
 
         technician_dict = {}
         key = "Technician"
@@ -198,22 +191,94 @@ def display_technician_managers(print_options):
     else:
         print(f"{response.json()}; Error code: {response.status_code}")
 
-    options.text_color = Term.GREEN
+def display_ticket_information(print_options):
+    options = print_options
+    url = f"{api_url_base}Technicians/TicketsInfo"
+
+    while True:
+        utils.print_text_block(text="Please enter the id of the technician whose tickets you would like to view, or type 'cancel' to cancel.", bottom_border = False, options=options)
+        utils.print_divider(options=options)
+        user_input = utils.get_input("Enter a command: ")
+        try:
+            technician_id = int(user_input)
+            break
+        except:
+            if user_input.lower() == "cancel":
+                return
+            print("Invalid input. Please try again.")
+
+    params = {"technician_id": f"{technician_id}"}
+    data = {}
+    tickets_response = requests.get(url, params=params, data=data)
+
+    url = f"{api_url_base}Technicians/Manager"
+    params = {"technician_id": f"{technician_id}"}
+    data = {}
+
+    technician_response = requests.get(url, params=params, data=data)
+
+    technician_name = ""
+
+    if technician_response.status_code == 200:
+        technician = technician_response.json()
+
+        technician = technician_response.json()
+
+        technician_name = f"{technician['technician_first_name']} {technician['technician_last_name']}".strip()
+        if technician_name.lower().endswith('s'):
+            technician_name += "' "
+        else:
+            technician_name += "'s "
+
+
+
+    if tickets_response.status_code == 200:
+        tickets = tickets_response.json()
+        if len(tickets) == 0:
+            utils.print_text_block(text=f"No tickets found for '{technician_name.strip()}'.", top_border=False, bottom_border=False, options=options)
+        else:
+            utils.print_divider(options=options)
+
+            utils.print_text_block(text=f"{technician_name}Tickets", top_border=False, bottom_border=False, options=options)
+
+            # Sort tickets in descending order based on open_date_time
+            tickets.sort(key=lambda x: datetime.strptime(x['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z'), reverse=True)
+
+            for ticket in tickets:
+                ticket_dict = {key: value for key, value in ticket.items()}# if key != 'open_date_time'}
+                utils.print_json_in_table_format(ticket_dict, options=options)
+                utils.print_blank_line(options=options)
+                utils.print_divider(options=options)
+                
+                # Add user prompt
+                user_input = utils.get_input("Press enter to continue or type 'cancel' to stop: ")
+                if user_input.lower() == 'cancel':
+                    break
+
+
+    # pass
+    #TODO: Finish this function
+
+
+
+
+
 
 def run(base_url):
     global api_url_base
     api_url_base = base_url
 
-    print_options = PrintOptions(border_marker_color=Term.GREEN, line_divider_color=Term.GREEN, text_color=Term.GREEN)
-    utils.print_text_block("Technician Viewer", bottom_border = False, options=print_options)
+    print_options = PrintOptions(border_marker_color=Term.GREEN, line_divider_color=Term.GREEN)
+    utils.print_text_block(text="Technician Viewer", bottom_border = False, options=print_options)
 
-    menu_options = ["1. Display Technician Names", "2. Display Technician Information"
-        , "3. Display Average Ticket Times", "4. Display Technician Manager", "0. Quit"]
+    menu_options = ["1. Technician Names", "2. Technician Information"
+        , "3. Average Ticket Times", "4. Technician\'s Manager", "5. Ticket Information", "0. Quit"]
     quit = False
     while not quit:
         print_options.alignment = 'center'
-        utils.print_text_block("Menu Options:", menu_options, options=print_options)
-        user_input = input("Enter a command: ")
+        utils.print_text_block(header="Options:", text=menu_options, options=print_options)
+        user_input = utils.get_input("Enter a command: ")
+        # user_input = input("Enter a command: ")
 
         if user_input == "1":
             display_technician_names(print_options)
@@ -223,6 +288,8 @@ def run(base_url):
             display_technician_avg_ticket_times(print_options)
         elif user_input == "4":
             display_technician_managers(print_options)
+        elif user_input == "5":
+            display_ticket_information(print_options)
         elif user_input == "0":
             print("Exiting Technician Viewer.")
             quit = True
