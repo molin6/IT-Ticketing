@@ -267,6 +267,27 @@ def update_ticket():
         return jsonify(updated_ticket), 200
     else:
         return 'Ticket is not updated', 500
+    
+#Ticket DELETE Calls
+@app.delete("/Tickets")
+def delete_ticket():
+    '''
+    Deletes a ticket based on the ticket id
+
+    params: ticket_id - the id of the ticket to delete, contained in the URL
+    '''
+
+    ticket_id, error, status = get_int_arg(request, 'ticket_id')
+    if error:
+        return error, status
+
+    result = Ticket.delete_ticket(ticket_id)
+
+    if isinstance(result, dict):
+        # An error occurred, return the error message and status code
+        return jsonify(result), result.get('status', 500)
+    else:
+        return jsonify({'message': 'Ticket {ticket_id} deleted Successfully!', 'status': 200}), 200
 
 #User GET Calls
 @app.get("/Users")

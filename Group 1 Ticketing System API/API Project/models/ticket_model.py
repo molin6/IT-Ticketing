@@ -59,13 +59,12 @@ class Ticket(Base):
             # open_date_time1 = datetime.strptime(ticket_data['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
             # close_date_time1 = datetime.strptime(ticket_data['close_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
             open_date_time1 = parse(ticket_data['open_date_time'])
-            close_date_time1 = parse(ticket_data['close_date_time'])
+            
             new_ticket = cls(user_id=ticket_data['user_id']
                              , department_id=ticket_data['department_id']
                              , prior_ticket_id=ticket_data['prior_ticket_id']
                              , ticket_category=ticket_data['ticket_category']
                              , open_date_time=open_date_time1
-                             , close_date_time=close_date_time1
                              , status=ticket_data['status']
                              , description=ticket_data['description']
                              , subject=ticket_data['subject'])
@@ -97,5 +96,14 @@ class Ticket(Base):
             session.commit()
             session.refresh(ticket)
             return ticket.as_dict()
+    
+    def delete_ticket(cls, ticket_id):
+        with cls.Session() as session:
+            ticket = session.query(cls).filter(cls.ticket_id == ticket_id).first()
+            if ticket is None:
+                return {'Error': 'Ticket not found', 'status': 404}
+            session.delete(ticket)
+            session.commit()
+        return True
 
         
