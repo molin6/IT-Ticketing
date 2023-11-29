@@ -40,8 +40,9 @@ class Ticket(Base):
     @classmethod
     def read_all_tickets(cls):
         with cls.Session() as session:
+            query = session.query(cls)
             tickets = []
-            for row in session.query(cls).all():
+            for row in query.all():
                 ticket = {
                     'Ticket ID' : row.ticket_id, 
                     'User ID' : row.user_id, 
@@ -56,7 +57,7 @@ class Ticket(Base):
                 tickets.append(ticket)
         return tickets
 
-    #show (param) of records in the Ticket tables, but when I call again, it shows the next (param) of records
+    #show (param) of records in the Ticket tables
     @classmethod
     def read_tickets(cls, start, limit):
         with cls.Session() as session:

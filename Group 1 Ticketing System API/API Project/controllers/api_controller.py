@@ -199,7 +199,7 @@ def read_all_tickets():
     '''
     Returns all ticket records from the Ticket table
     '''
-
+    
     tickets = Ticket.read_all_tickets()
     return jsonify(tickets), 200
 

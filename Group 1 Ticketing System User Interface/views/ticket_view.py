@@ -130,8 +130,6 @@ def view_one_ticket(ticket_id, print_options):
 
             utils.print_text_block(f"Ticket #{ticket_id}", top_border=False, bottom_border=False, options=options)
 
-            
-            
             utils.print_json_in_table_format(aticket, options=options)
             utils.print_blank_line(options=options)
             utils.print_divider(options=options)
@@ -139,16 +137,13 @@ def view_one_ticket(ticket_id, print_options):
         print(f"{response.json()}; Error code: {response.status_code}")
     options.text_color = Term.GREEN
 
-def view_all_tickets():
+def get_all_tickets():
     url = f"{api_url_base}/Tickets/All"
     response = requests.get(url)
-    tickets = response.json()
-    return tickets
+    return response.json()
 
 def view_all_tickets(print_options):
     options = print_options
-    limit = None
-    start = 0
 
     while True:
         utils.print_text_block("How many tickets would you like to view at a time? Please enter a whole number, or type 'all' to view all tickets.", bottom_border = False, options=options)
@@ -156,83 +151,86 @@ def view_all_tickets(print_options):
         user_input = input("Enter a command: ")
 
         if user_input == "all":
-            limit = None
-            break    
-        else:
-            try:
-                limit = int(user_input)
-                break
-            except:
-                print("Invalid input. Please try again.")
-        
-    url = f"{api_url_base}/Tickets"
-
-    get_more = True
-    while get_more:
-        params = {'start': start, 'limit': limit}
-        data = {}
-        response = requests.get(url, params=params, data=data)
-
-        if response.status_code == 200:
-            tickets = response.json()
+            tickets = get_all_tickets()
+            
             if len(tickets) == 0:
-                 print("No ticket found.")
-                 break
-            utils.print_divider(options=options)
+                        print("No ticket found.")
+                        break
+            else:
+                options.text_color = Term.BLUE_BOLD
+                utils.print_divider(options=options)
 
-            for ticket in tickets:
+                utils.print_text_block("Current Technicians", top_border=False, bottom_border=False, options=options)
+                ticket_dict = {}
+                for ticket in tickets:
 
-                ordered_keys = ['ticket_id', 'user_id'
-                                    , 'department_id'
-                                    , 'prior_ticket_id'
-                                    , 'ticket_category'
-                                    , 'open_date_time'
-                                    , 'close_date_time'
-                                    , 'status'
-                                    , 'description'
-                                    , 'subject']
-                rename_keys = {'ticket_id': 'Ticket Id'
-                                , 'user_id': 'User Id'
-                                , 'department_id': 'Department Id'
-                                , 'prior_ticket_id': 'Prior Ticket Id'
-                                , 'ticket_category': 'Ticket Category'
-                                , 'open_date_time': 'Open Date Time'
-                                , 'close_date_time': 'Close Date Time'
-                                , 'status': 'Status'
-                                , 'description': 'Description'
-                                , 'subject': 'Subject'}
+                    key = f"Ticket {ticket['Ticket ID']}"
+                    ticket_dict[key] = f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}"
 
-                options.tab_spaces = 0
-                options.alignment = 'left'
-                options.text_color = Term.GREEN
-                utils.print_json_in_table_format(ticket, ordered_keys, rename_keys, options=options)
-
-                options.tab_spaces = 0
+                utils.print_json_in_table_format(ticket_dict, options=options)
                 utils.print_blank_line(options=options)
                 utils.print_divider(options=options)
 
+                break    
         else:
-            print(f"{response.json()}; Error code: {response.status_code}")
-            break
-
-        if limit is None:
-            break
-        start += limit
-
-        while True:
-            options.alignment = 'center'
-            utils.print_text_block("Would you like to view more tickets? Please enter 'yes' or 'no'.", bottom_border = False, options=options)
-            utils.print_divider(options=options)
-            user_input = input("Enter a command: ")
-            if user_input == "yes":
-                get_more = True
-                break
-            elif user_input == "no":
-                get_more = False
+            start = 0
+            limit = int(user_input)
+            tickets = customize_view_all_tickets(start, limit)
+            if len(tickets) == 0:
+                print("No ticket found.")
                 break
             else:
-                print("Invalid input. Please try again.")
+                options.text_color = Term.BLUE_BOLD
+                utils.print_divider(options=options)
+
+                utils.print_text_block("Tickets", top_border=False, bottom_border=False, options=options)
+                ticket_dict = {}
+                for ticket in tickets:
+
+                    key = f"Ticket {ticket['Ticket ID']}"
+                    ticket_dict[key] = f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}"
+
+                utils.print_json_in_table_format(ticket_dict, options=options)
+                utils.print_blank_line(options=options)
+                utils.print_divider(options=options)
+            
+            while True:
+                utils.print_text_block("Would you like to view more tickets? Please enter 'yes' or 'no'.", bottom_border = False, options=options)
+                utils.print_divider(options=options)
+                user_input = input("Enter a command: ")
+                if user_input == "yes":
+                    start += limit
+                    tickets = customize_view_all_tickets(start, limit)
+                    options.text_color = Term.BLUE_BOLD
+                    utils.print_divider(options=options)
+
+                    utils.print_text_block("Tickets", top_border=False, bottom_border=False, options=options)
+                    ticket_dict = {}
+                    for ticket in tickets:
+
+                        key = f"Ticket {ticket['Ticket ID']}"
+                        ticket_dict[key] = f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}"
+
+                    utils.print_json_in_table_format(ticket_dict, options=options)
+                    utils.print_blank_line(options=options)
+                    utils.print_divider(options=options)
+                elif user_input == "no":
+                    break
+                else:
+                    print("Invalid input. Please try again.")
+                    break
+            break
     options.text_color = Term.GREEN
+
+def customize_view_all_tickets(start, limit):
+        
+        url = f"{api_url_base}/Tickets"
+
+        params = {'start': start, 'limit': limit}
+
+        response = requests.get(url, params=params)
+        return response.json()
+
 
         # # Get the next batch of tickets
         # url = f"{api_url_base}/Tickets?limit={limit}&offset={offset}"
@@ -254,16 +252,16 @@ def view_all_tickets(print_options):
         #     break
 
 def view_ticket(print_options):
-    view_choice = input("Do you want to view one ticket or all tickets? (one/all): ").lower()
+    view_choice = input("Do you want to view one ticket or all tickets? (one/more): ").lower()
 
     if view_choice == "one":
         ticket_id = input("Enter the Ticket ID to view: ")
         ticket_info = view_one_ticket(ticket_id, print_options=print_options)
         print(json.dumps(ticket_info, indent=2))
-    elif view_choice == "all":
+    elif view_choice == "more":
         view_all_tickets(print_options=print_options)
     else:
-        print("Invalid choice. Please enter 'one' or 'all'.")
+        print("Invalid choice. Please enter 'one' or 'more'.")
 
 
 def run(base_url):
