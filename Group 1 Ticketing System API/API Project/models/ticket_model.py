@@ -27,7 +27,36 @@ class Ticket(Base):
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    #show (param) of records in the Ticket tables
+    #show ticket record based on the ticket_id
+    @classmethod
+    def read_ticketid(cls, ticket_id):
+        with cls.Session() as session:
+            ticket = session.query(cls).filter(cls.ticket_id == ticket_id).first()
+            if ticket is None:
+                return {'Error': 'Ticket not found', 'status': 404}
+            return ticket.as_dict()
+
+    #show all ticket records
+    @classmethod
+    def read_all_tickets(cls):
+        with cls.Session() as session:
+            tickets = []
+            for row in session.query(cls).all():
+                ticket = {
+                    'Ticket ID' : row.ticket_id, 
+                    'User ID' : row.user_id, 
+                    'Department ID' : row.department_id, 
+                    'Prior Ticket ID' : row.prior_ticket_id, 
+                    'Ticket Category' : row.ticket_category, 
+                    'Open Date Time' : row.open_date_time, 
+                    'Close Date Time' : row.close_date_time, 
+                    'Status': row.status, 
+                    'Description' : row.description, 
+                    'Subject' : row.subject}
+                tickets.append(ticket)
+        return tickets
+
+    #show (param) of records in the Ticket tables, but when I call again, it shows the next (param) of records
     @classmethod
     def read_tickets(cls, start, limit):
         with cls.Session() as session:
@@ -82,21 +111,18 @@ class Ticket(Base):
             ticket = session.query(cls).filter(cls.ticket_id == ticket_id).first()
             # open_date_time1 = datetime.strptime(ticket_data['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
             # close_date_time1 = datetime.strptime(ticket_data['close_date_time'], '%a, %d %b %Y %H:%M:%S %Z')
-            open_date_time1 = parse(ticket_data['open_date_time'])
-            close_date_time1 = parse(ticket_data['close_date_time'])
+            
             ticket.user_id = ticket_data['user_id']
             ticket.department_id = ticket_data['department_id']
             ticket.prior_ticket_id = ticket_data['prior_ticket_id']
             ticket.ticket_category = ticket_data['ticket_category']
-            ticket.open_date_time = open_date_time1
-            ticket.close_date_time = close_date_time1
-            ticket.status = ticket_data['status']
             ticket.description = ticket_data['description']
             ticket.subject = ticket_data['subject']
             session.commit()
             session.refresh(ticket)
             return ticket.as_dict()
     
+    @classmethod
     def delete_ticket(cls, ticket_id):
         with cls.Session() as session:
             ticket = session.query(cls).filter(cls.ticket_id == ticket_id).first()
