@@ -6,6 +6,73 @@ from utils import text_print_utils as utils
 from utils.text_print_options import PrintOptions, Term
 
 
+def display_department_information(print_options):
+    options = print_options
+    start = 0
+    limit = None
+
+    while True:
+
+        utils.print_text_block(text="How many departments would you like to view at a time? Please enter a whole number, or type 'all' to view all departments.", bottom_border = False, options=options)
+        utils.print_divider(options=options)
+        user_input = utils.get_input("Enter a command: ")
+        if user_input == "all":
+            limit = None
+            break
+        else:
+            try:
+                limit = int(user_input)
+                break
+            except:
+                print("Invalid input. Please try again.")
+
+
+    url = f"{api_url_base}Departments"
+
+    get_more = True
+    while get_more:
+        params = {'start': start, 'limit': limit}
+        data = {}
+        response = requests.get(url, params=params, data=data)
+
+        if response.status_code == 200:
+            departments = response.json()
+            if len(departments) == 0:
+                print("No departments found.")
+                break
+            utils.print_divider(options=options)
+
+            for department in departments:
+
+                ordered_keys = ['Name', 'Email Address', 'Phone Number', 'Organization ID', 'Department ID']
+                rename_keys = {'Phone Number': 'Phone #', 'Organization ID': 'Organization Id', 'Department ID': 'Department Id'}
+
+                utils.print_json_in_table_format(department, ordered_keys, rename_keys, options=options)
+
+                utils.print_blank_line(options=options)
+                utils.print_divider(options=options)
+
+        else:
+            print(f"{response.json()}; Error code: {response.status_code}")
+            break
+
+        if limit is None:
+            break
+        start += limit
+
+        while True:
+            options.alignment = 'center'
+            utils.print_text_block(text="Would you like to view more departments? Please enter 'yes' or 'no'.", bottom_border = False, options=options)
+            utils.print_divider(options=options)
+            user_input = utils.get_input("Enter a command: ")
+            if user_input == "yes":
+                get_more = True
+                break
+            elif user_input == "no":
+                get_more = False
+                break
+            else:
+                print("Invalid input. Please try again.")
 
 
 
@@ -19,24 +86,24 @@ def run(base_url):
     global api_url_base
     api_url_base = base_url
 
-    print_options = PrintOptions(border_marker_color=Term.GREEN, line_divider_color=Term.GREEN, text_color=Term.GREEN)
+    print_options = PrintOptions(border_marker_color=Term.YELLOW, line_divider_color=Term.YELLOW)
     utils.print_text_block("Department Viewer", bottom_border = False, options=print_options)
 
-    menu_options = ["0. Quit"]
+    menu_options = ["1. Department Information", "0. Main Menu"]
     quit = False
     while not quit:
         print_options.alignment = 'center'
         utils.print_text_block("Menu Options:", menu_options, options=print_options)
-        user_input = input("Enter a command: ")
+        user_input = utils.get_input("Enter a command: ")
 
         if user_input == "1":
-            pass
-        elif user_input == "2":
-            pass
-        elif user_input == "3":
-            pass
-        elif user_input == "4":
-            pass
+            display_department_information(print_options)
+        # elif user_input == "2":
+        #     pass
+        # elif user_input == "3":
+        #     pass
+        # elif user_input == "4":
+        #     pass
         elif user_input == "0":
             print("Exiting Department Viewer.")
             quit = True

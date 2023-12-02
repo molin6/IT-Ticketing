@@ -344,7 +344,7 @@ def read_user_ticket_counts():
     TODO: Insert tooltip documentation here
     params: user_id - optional parameter for the id of the user to retrieve the ticket count information
     '''
-    user_id, error, status = get_int_arg(request, 'user_id')
+    user_id, error, status = get_int_arg(request, 'user_id', is_required=False)
     if error:
         return error, status
 
