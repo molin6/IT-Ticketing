@@ -173,7 +173,7 @@ def read_ticket_lines():
     # ticket_lines = TicketLine.read_ticket_lines()[:limit]
     return jsonify(ticket_lines), 200
 
-#Ticket GET Calls
+#Ticket GET Calls and call again to get the next (param) of records
 @app.get("/Tickets")
 def read_tickets():
     '''
@@ -192,6 +192,32 @@ def read_tickets():
     
     tickets = Ticket.read_tickets(start, limit)
     return jsonify(tickets), 200
+
+#Ticket GET All Tickets
+@app.get("/Tickets/All")
+def read_all_tickets():
+    '''
+    Returns all ticket records from the Ticket table
+    '''
+    
+    tickets = Ticket.read_all_tickets()
+    return jsonify(tickets), 200
+
+#Ticket GET Calls by Ticket ID
+@app.get("/Tickets/ID")
+def read_ticketid():
+    '''
+    Returns ticket records from the Ticket table based on the ticket_id
+
+    params: ticket_id - the id of the ticket to retrieve, contained in the URL
+    '''
+
+    ticket_id, error, status = get_int_arg(request, 'ticket_id')
+    if error:
+        return error, status
+
+    ticket = Ticket.read_ticketid(ticket_id)
+    return jsonify(ticket), 200
 
 
 #Ticket POST Calls
@@ -264,7 +290,7 @@ def update_ticket():
     updated_ticket = Ticket.update_ticket(ticket_id, ticket_data)
 
     if updated_ticket is not None:
-        return jsonify(updated_ticket), 200
+        return jsonify("Successfully updated the ticket"), 200
     else:
         return 'Ticket is not updated', 500
     
@@ -287,7 +313,7 @@ def delete_ticket():
         # An error occurred, return the error message and status code
         return jsonify(result), result.get('status', 500)
     else:
-        return jsonify({'message': 'Ticket {ticket_id} deleted Successfully!', 'status': 200}), 200
+        return jsonify('Ticket deleted Successfully!'), 200
 
 #User GET Calls
 @app.get("/Users")
