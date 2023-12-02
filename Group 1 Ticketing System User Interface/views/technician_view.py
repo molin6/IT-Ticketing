@@ -1,5 +1,6 @@
 import requests
 import json
+import textwrap
 from datetime import datetime
 from utils import text_print_utils as utils
 from utils.text_print_options import PrintOptions, Term
@@ -245,24 +246,15 @@ def display_ticket_information(print_options):
             tickets.sort(key=lambda x: datetime.strptime(x['open_date_time'], '%a, %d %b %Y %H:%M:%S %Z'), reverse=True)
 
             for ticket in tickets:
-                ticket_dict = {key: value for key, value in ticket.items()}# if key != 'open_date_time'}
+                ticket_dict = {key: textwrap.fill(value, 50) if isinstance(value, str) and len(value) > 50 else value for key, value in ticket.items()}
                 utils.print_json_in_table_format(ticket_dict, options=options)
                 utils.print_blank_line(options=options)
                 utils.print_divider(options=options)
-                
+                            
                 # Add user prompt
                 user_input = utils.get_input("Press enter to continue or type 'cancel' to stop: ")
                 if user_input.lower() == 'cancel':
                     break
-
-
-    # pass
-    #TODO: Finish this function
-
-
-
-
-
 
 def run(base_url):
     global api_url_base
