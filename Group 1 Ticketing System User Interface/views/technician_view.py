@@ -264,7 +264,7 @@ def run(base_url):
     utils.print_text_block(text="Technician Viewer", bottom_border = False, options=print_options)
 
     menu_options = ["1. Technician Names", "2. Technician Information"
-        , "3. Average Ticket Times", "4. Technician\'s Manager", "5. Ticket Information", "0. Quit"]
+        , "3. Average Ticket Times", "4. Technician\'s Manager", "5. Ticket Information", "0. Main Menu"]
     quit = False
     while not quit:
         print_options.alignment = 'center'

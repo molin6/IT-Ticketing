@@ -87,27 +87,24 @@ def run(base_url):
     global api_url_base
     api_url_base = base_url
 
-    print_options = PrintOptions(border_marker_color=Term.MAGENTA, line_divider_color=Term.MAGENTA, text_color=Term.MAGENTA)
+    print_options = PrintOptions(border_marker_color=Term.MAGENTA, line_divider_color=Term.MAGENTA)
     utils.print_text_block("User Viewer", bottom_border = False, options=print_options)
-
-    # menu_options = ["1. Technician Names", "2. Technician Information"
-    #     , "3. Average Ticket Times", "4. Technician\'s Manager", "5. Ticket Information", "0. Quit"]
         
-    menu_options = ["1. User Information", "0. Quit"]
+    menu_options = ["1. User Information", "0. Main Menu"]
     quit = False
     while not quit:
         print_options.alignment = 'center'
         utils.print_text_block("Menu Options:", menu_options, options=print_options)
-        user_input = input("Enter a command: ")
+        user_input = utils.get_input("Enter a command: ")
 
         if user_input == "1":
             display_user_information(print_options)
-        elif user_input == "2":
-            pass
-        elif user_input == "3":
-            pass
-        elif user_input == "4":
-            pass
+        # elif user_input == "2":
+        #     pass
+        # elif user_input == "3":
+        #     pass
+        # elif user_input == "4":
+        #     pass
         elif user_input == "0":
             print("Exiting User Viewer.")
             quit = True

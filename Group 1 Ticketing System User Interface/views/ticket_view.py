@@ -1,5 +1,6 @@
 import requests
 import json
+import textwrap
 from datetime import datetime
 # import datetime
 from utils import text_print_utils as utils
@@ -7,16 +8,16 @@ from utils.text_print_options import PrintOptions, Term
 
 def create_ticket(print_options):
     options = print_options
-    userid = int(input("Enter the ID of the user who created the ticket: "))
-    departmentid = int(input("Enter the ID of the department: "))
-    priorticketid = int(input("Enter the ID of the prior ticket (enter 0 for no prior ticket): "))
+    userid = int(utils.get_input("Enter the ID of the user who created the ticket: "))
+    departmentid = int(utils.get_input("Enter the ID of the department: "))
+    priorticketid = int(utils.get_input("Enter the ID of the prior ticket (enter 0 for no prior ticket): "))
     if priorticketid == 0:
         priorticketid = None
     else:
         priorticketid = priorticketid
-    ticketcategory = input("Enter the category of the ticket: ")
-    subject = input("Enter the subject of the ticket: ")
-    description = input("Enter the description of the ticket: ")
+    ticketcategory = utils.get_input("Enter the category of the ticket: ")
+    subject = utils.get_input("Enter the subject of the ticket: ")
+    description = utils.get_input("Enter the description of the ticket: ")
 
     # Automatically add the current date and time for the created_at field
     open_date_time = datetime.now().isoformat()
@@ -36,7 +37,7 @@ def create_ticket(print_options):
     response = requests.post(f"{api_url_base}/Tickets", json=ticket_data)
 
     if response.status_code == 200:
-        options.text_color = Term.BLUE_BOLD
+        # options.text_color = Term.BLUE_BOLD
         utils.print_divider(options=options)
         utils.print_text_block("Message", top_border=False, bottom_border=False, options=options)
         utils.print_text("Ticket created successfully.", options=options)
@@ -47,7 +48,7 @@ def create_ticket(print_options):
         utils.print_blank_line(options=options)
         utils.print_divider(options=options)
     else:
-        options.text_color = Term.BLUE_BOLD
+        # options.text_color = Term.BLUE_BOLD
         utils.print_divider(options=options)
         utils.print_text_block("Message", top_border=False, bottom_border=False, options=options)
         utils.print_text("Ticket creation failed.", options=options)
@@ -60,9 +61,9 @@ def delete_ticket(ticket_id):
 
 def remove_ticket(print_options):
     options = print_options
-    ticket_id = input("Enter the Ticket ID to delete: ")
+    ticket_id = utils.get_input("Enter the Ticket ID to delete: ")
     result = delete_ticket(ticket_id)
-    options.text_color = Term.BLUE_BOLD
+    # options.text_color = Term.BLUE_BOLD
     utils.print_divider(options=options)
     utils.print_text_block("Message", top_border=False, bottom_border=False, options=options)
     utils.print_text(result, options=options)
@@ -82,25 +83,25 @@ def put_ticket(ticket_id, ticket_data):
 
 def modify_ticket(print_options):
     options = print_options
-    ticket_id = input("Enter the Ticket ID to view and modify: ")
+    ticket_id = utils.get_input("Enter the Ticket ID to view and modify: ")
 
     ticket_info = view_one_ticket(ticket_id,print_options=print_options)
 
     print("Ticket Details:")
     print(json.dumps(ticket_info, indent=2))
 
-    modify_choice = input("Do you want to modify this ticket? (yes/no): ").lower()
+    modify_choice = utils.get_input("Do you want to modify this ticket? (yes/no): ").lower()
     if modify_choice == "yes":
         ticket_data = {
-            "user_id": int(input("Enter User ID: ")),
-            "department_id": int(input("Enter Department ID: ")),
-            "prior_ticket_id": int(input("Enter Prior Ticket ID: ")),
-            "ticket_category": input("Enter Ticket Category: "),
-            "description": input("Enter Description: "),
-            "subject": input("Enter Subject: ")
+            "user_id": int(utils.get_input("Enter User ID: ")),
+            "department_id": int(utils.get_input("Enter Department ID: ")),
+            "prior_ticket_id": int(utils.get_input("Enter Prior Ticket ID: ")),
+            "ticket_category": utils.get_input("Enter Ticket Category: "),
+            "description": utils.get_input("Enter Description: "),
+            "subject": utils.get_input("Enter Subject: ")
         }
 
-        options.text_color = Term.BLUE_BOLD
+        # options.text_color = Term.BLUE_BOLD
         utils.print_divider(options=options)
 
         utils.print_text_block("Message", top_border=False, bottom_border=False, options=options)
@@ -125,7 +126,7 @@ def view_one_ticket(ticket_id, print_options):
         if len(aticket) == 0:
             print("No ticket found.")
         else:
-            options.text_color = Term.BLUE_BOLD
+            # options.text_color = Term.BLUE_BOLD
             utils.print_divider(options=options)
 
             utils.print_text_block(f"Ticket #{ticket_id}", top_border=False, bottom_border=False, options=options)
@@ -135,7 +136,7 @@ def view_one_ticket(ticket_id, print_options):
             utils.print_divider(options=options)
     else:
         print(f"{response.json()}; Error code: {response.status_code}")
-    options.text_color = Term.GREEN
+    # options.text_color = Term.GREEN
 
 def get_all_tickets():
     url = f"{api_url_base}/Tickets/All"
@@ -145,10 +146,12 @@ def get_all_tickets():
 def view_all_tickets(print_options):
     options = print_options
 
+    value_width = 50
+
     while True:
         utils.print_text_block("How many tickets would you like to view at a time? Please enter a whole number, or type 'all' to view all tickets.", bottom_border = False, options=options)
         utils.print_divider(options=options)
-        user_input = input("Enter a command: ")
+        user_input = utils.get_input("Enter a command: ")
 
         if user_input == "all":
             tickets = get_all_tickets()
@@ -157,7 +160,7 @@ def view_all_tickets(print_options):
                         print("No ticket found.")
                         break
             else:
-                options.text_color = Term.BLUE_BOLD
+                # options.text_color = Term.BLUE_BOLD
                 utils.print_divider(options=options)
 
                 utils.print_text_block("Current Technicians", top_border=False, bottom_border=False, options=options)
@@ -165,7 +168,10 @@ def view_all_tickets(print_options):
                 for ticket in tickets:
 
                     key = f"Ticket {ticket['Ticket ID']}"
-                    ticket_dict[key] = f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}"
+                    ticket_dict[key] = textwrap.fill(f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}", value_width)
+
+
+                    # ticket_dict[key] = f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}"
 
                 utils.print_json_in_table_format(ticket_dict, options=options)
                 utils.print_blank_line(options=options)
@@ -180,7 +186,7 @@ def view_all_tickets(print_options):
                 print("No ticket found.")
                 break
             else:
-                options.text_color = Term.BLUE_BOLD
+                # options.text_color = Term.BLUE_BOLD
                 utils.print_divider(options=options)
 
                 utils.print_text_block("Tickets", top_border=False, bottom_border=False, options=options)
@@ -188,7 +194,7 @@ def view_all_tickets(print_options):
                 for ticket in tickets:
 
                     key = f"Ticket {ticket['Ticket ID']}"
-                    ticket_dict[key] = f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}"
+                    ticket_dict[key] = textwrap.fill(f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}", value_width)
 
                 utils.print_json_in_table_format(ticket_dict, options=options)
                 utils.print_blank_line(options=options)
@@ -197,11 +203,11 @@ def view_all_tickets(print_options):
             while True:
                 utils.print_text_block("Would you like to view more tickets? Please enter 'yes' or 'no'.", bottom_border = False, options=options)
                 utils.print_divider(options=options)
-                user_input = input("Enter a command: ")
+                user_input = utils.get_input("Enter a command: ")
                 if user_input == "yes":
                     start += limit
                     tickets = customize_view_all_tickets(start, limit)
-                    options.text_color = Term.BLUE_BOLD
+                    # options.text_color = Term.BLUE_BOLD
                     utils.print_divider(options=options)
 
                     utils.print_text_block("Tickets", top_border=False, bottom_border=False, options=options)
@@ -209,7 +215,7 @@ def view_all_tickets(print_options):
                     for ticket in tickets:
 
                         key = f"Ticket {ticket['Ticket ID']}"
-                        ticket_dict[key] = f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}"
+                        ticket_dict[key] = textwrap.fill(f"{ticket['Subject']} {ticket['Description']} {ticket['Status']} {ticket['Open Date Time']} {ticket['Close Date Time']} {ticket['Ticket Category']} {ticket['Prior Ticket ID']} {ticket['Department ID']} {ticket['User ID']}", value_width)
 
                     utils.print_json_in_table_format(ticket_dict, options=options)
                     utils.print_blank_line(options=options)
@@ -220,7 +226,7 @@ def view_all_tickets(print_options):
                     print("Invalid input. Please try again.")
                     break
             break
-    options.text_color = Term.GREEN
+    # options.text_color = Term.GREEN
 
 def customize_view_all_tickets(start, limit):
         
@@ -252,10 +258,10 @@ def customize_view_all_tickets(start, limit):
         #     break
 
 def view_ticket(print_options):
-    view_choice = input("Do you want to view one ticket or all tickets? (one/more): ").lower()
+    view_choice = utils.get_input("Do you want to view one ticket or all tickets? (one/more): ").lower()
 
     if view_choice == "one":
-        ticket_id = input("Enter the Ticket ID to view: ")
+        ticket_id = utils.get_input("Enter the Ticket ID to view: ")
         ticket_info = view_one_ticket(ticket_id, print_options=print_options)
         print(json.dumps(ticket_info, indent=2))
     elif view_choice == "more":
@@ -268,14 +274,14 @@ def run(base_url):
     global api_url_base
     api_url_base = base_url
 
-    print_options = PrintOptions(border_marker_color=Term.GREEN, line_divider_color=Term.GREEN, text_color=Term.GREEN)
-    utils.print_text_block("Ticket Management System", bottom_border = False)
+    print_options = PrintOptions(border_marker_color=Term.BLUE, line_divider_color=Term.BLUE)
+    utils.print_text_block("Ticket Management System", bottom_border = False, options=print_options)
 
     menu_options = ["1. Create a Ticket", "2. Delete a Ticket", "3. Modify a Ticket", "4. View a Ticket/Tickets", "0. Main Menu"]
     quit = False
     while not quit:
-        utils.print_text_block("Menu Options:", menu_options)
-        user_input = input("Enter a command: ")
+        utils.print_text_block("Menu Options:", menu_options, options=print_options)
+        user_input = utils.get_input("Enter a command: ")
 
         if user_input == "1":
             create_ticket(print_options)
