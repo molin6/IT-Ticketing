@@ -15,16 +15,19 @@ class Term:
     UNDERLINE = '\033[4m'
 
     # ANSI escape codes for combinations of colors and styles
+    RESET_BOLD = RESET + BOLD
     RED_BOLD = RED + BOLD
     GREEN_BOLD = GREEN + BOLD
     YELLOW_BOLD = YELLOW + BOLD
     BLUE_BOLD = BLUE + BOLD
     MAGENTA_BOLD = MAGENTA + BOLD
+    RESET_UNDERLINE = RESET + UNDERLINE
     RED_UNDERLINE = RED + UNDERLINE
     GREEN_UNDERLINE = GREEN + UNDERLINE
     YELLOW_UNDERLINE = YELLOW + UNDERLINE
     BLUE_UNDERLINE = BLUE + UNDERLINE
     MAGENTA_UNDERLINE = MAGENTA + UNDERLINE
+    RESET_BOLD_UNDERLINE = RESET + BOLD + UNDERLINE
     RED_BOLD_UNDERLINE = RED + BOLD + UNDERLINE
     GREEN_BOLD_UNDERLINE = GREEN + BOLD + UNDERLINE
     YELLOW_BOLD_UNDERLINE = YELLOW + BOLD + UNDERLINE
@@ -59,3 +62,16 @@ class PrintOptions:
         self.line_divider_color = line_divider_color
         self.item_divider_color = item_divider_color
 
+    def copy(self):
+        return PrintOptions(
+            alignment=self.alignment,
+            tab_spaces=self.tab_spaces,
+            screen_width=self.screen_width,
+            border_marker_char=self.border_marker_char,
+            line_divider_char=self.line_divider_char,
+            item_divider_char=self.item_divider_char,
+            text_color=self.text_color,
+            border_marker_color=self.border_marker_color,
+            line_divider_color=self.line_divider_color,
+            item_divider_color=self.item_divider_color
+        )

@@ -16,7 +16,7 @@ def run():
 def hello_world():
     return 'Hello world'
 
-def get_int_arg(request, arg_name, default_value=None, non_negative=False):
+def get_int_arg(request, arg_name, default_value=None, non_negative=False, is_required=True):
     '''
     Gets an integer argument from the request object
 
@@ -24,11 +24,15 @@ def get_int_arg(request, arg_name, default_value=None, non_negative=False):
             arg_name - the name of the argument to retrieve
             default_value - the default value to use if the argument is not provided
             non_negative - whether to check if the value is non-negative
+            is_required - whether the argument is required
     '''
 
     arg_value = request.args.get(arg_name, default_value)
     if arg_value is None:
-        return None, jsonify({'Error': f'Missing {arg_name} parameter'}), 400
+        if is_required:
+            return None, jsonify({'Error': f'Missing {arg_name} parameter'}), 400
+        else:
+            return None, None, None
 
     try:
         arg_value = int(arg_value)
@@ -344,7 +348,11 @@ def read_user_ticket_counts():
     if error:
         return error, status
 
-    users = User.read_user_ticket_counts(user_id)
+    if user_id is not None:
+        users = User.read_user_ticket_counts(user_id)
+    else:
+        users = User.read_user_ticket_counts()
+
     return jsonify(users), 200
 
 #User DELETE Calls
