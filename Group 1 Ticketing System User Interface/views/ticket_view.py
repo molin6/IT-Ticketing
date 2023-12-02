@@ -131,12 +131,14 @@ def view_one_ticket(ticket_id, print_options):
 
             utils.print_text_block(f"Ticket #{ticket_id}", top_border=False, bottom_border=False, options=options)
 
+            # Wrap the text in the values if they're longer than 50 characters
+            aticket = {key: textwrap.fill(value, 50) if isinstance(value, str) and len(value) > 50 else value for key, value in aticket.items()}
+
             utils.print_json_in_table_format(aticket, options=options)
             utils.print_blank_line(options=options)
             utils.print_divider(options=options)
     else:
         print(f"{response.json()}; Error code: {response.status_code}")
-    # options.text_color = Term.GREEN
 
 def get_all_tickets():
     url = f"{api_url_base}/Tickets/All"
