@@ -5,8 +5,10 @@ from models.ticket_line_model import TicketLine
 from models.ticket_model import Ticket
 from models.user_model import User
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 def run():
     # Start the API server

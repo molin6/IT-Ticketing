@@ -12,6 +12,7 @@ from faker import Faker
 import random
 from utils import G1_common_tools as tools
 import sqlite3
+import random
 
 fake = Faker()
 
@@ -108,7 +109,7 @@ def seed_tickets(session: Session, users: list, num_tickets_per_user: int=None):
                 ticket_category=fake.word(),
                 open_date_time=fake.date_time_this_decade(),
                 close_date_time=fake.date_time_this_decade(),
-                status=fake.word(),
+                status=random.choice(["open", "closed"]),  # Modified line
                 description=fake.text(),
                 subject=fake.sentence(),
             )
